@@ -1,0 +1,43 @@
+---
+title: "Einführung in R für IDK"
+author: "Lorenz Biberstein, IDK, ZHAW"
+date: "`r Sys.time()`"
+date-format: medium
+format: 
+  revealjs:
+    embed-resources: true
+    self-contained: true
+editor: visual
+lang: "de-DE"
+---
+
+## R und R Studio
+
+-   Installieren aus Softwarecenter
+-   Zuerst R, dann R Studio
+
+## Layout R Studio
+
+## Unterschied zu SPSS
+
+-   Skripte und Konsole
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+## Projekte
+
+## Importieren von Daten
+
+## R Skripte
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Github
