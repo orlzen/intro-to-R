@@ -20,7 +20,7 @@ lang: "de-DE"
 
 ## To do
 
--   Deskriptive Analysen
+-   Deskriptive Analysen, alltägliche Anwendungen für uns
 -   Mehr Grundsätzliches am Anfang, weniger Fortgeschrittenes
 -   Alle benutzten Codes aus den Chunks in R Skript übertragen
 
@@ -50,60 +50,79 @@ knitr::opts_chunk$set(
 -   Basisprogramm ist R
 -   Benutzt wird es aber meistens über RStudio
 -   Installieren aus Software Center
-    -   Zuerst R (muss später nie mehr geöffnet werden), dann RStudio (GUI)
+    -   Zuerst R (muss später nie mehr geöffnet werden), dann RStudio (GUI) (@fig-rstudio)
 
 ![R und RStudio im Software Center](images/Screenshot.png){#fig-rstudio}
 
 ![Layout RStudio](images/image-267797392.png){#fig-layout-rstudio}
 
--   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, siehe @ig-rstudio)
+-   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, siehe @fig-layout-rstudio)
 -   Am wichtigsten:
     -   Konsole für freie Eingage von Code (hier unten links) und Output von Analysen
     -   Skript (oben links)
-    -   Daten ("Environment"; oben rechts)
+    -   Daten & Objekte ("Environment"; oben rechts)
     -   Projektordner ("Files"; unten rechts)
     -   Abbildungen ("Plots"; unten rechts)
 
 ## Unterschied zu SPSS
 
 -   Skripte und Konsole
+
+-   R kann verschiedene Objekte gleichzeitig laden (oben rechts in "Environment"; @fig-environment), diese können verschiedene Strukturen haben
+
+![Environment mit verschiedenen geladenen Objekten](images/Screenshot%20(40).png){#fig-environment}
+
 -   Gleichzeitig geladene Objekte können verschieden Strukturen haben:
     -   Klassische Datensätze mit Fällen in Zeilen und Variablen in Spalten (meistens als "data frame" oder "tibble")
     -   Nur ein einzelner Wert
-    -   Vektoren 
+    -   Vektoren / Matrizen
+    -   "Klassische" Datensätze (als "data frame" oder "tibble")
+    -   Listen (z.B. Resultate von Analysen, Koeffizienten, Parameter etc., falls diese einem Objekt zugewiesen werden, siehe @sec-objekte)
 -   Befehle müssen die zu benutzenden Daten eindeutig identifizieren
     -   Z.B. `mean(iris$Sepal.Width)` -\> bezieht sich auf die Variable "Sepal.Width" im Datensatz "Iris"
 -   R ist case sensitive! "x" ist nicht das gleiche wie "X"!
 -   Daten können auch angeschaut werden (mit `View(df)`), aber insgesamt ist die Anwendung viel mehr Code-basiert
--   Nicht wie in SPSS versch. Fenster für Syntax, Output und Daten, sondern alles in einem
+-   Nicht wie in SPSS versch. Fenster für Syntax, Output und Daten, sondern alles in einem Fenster (Ausnahmen sind möglich, z.B. zusätzliches Fenster für Abbildungen)
 
 ## Projekte
 
--   Ein Hauptordner für ganzes Projekt
+-   Sehr zu empfehlen, sobald man nicht nur eine einzelne quick and dirty-Analyse machen will: Projekt anlegen
+    -   File -\> New Project -\> (@fig-new-project)
+        -   Auswahl aus verschiedenen Ablagemöglichkeiten. Am einfachsten: "New Directory".
+        -   Falls mit Versionskontrolle gearbeitet wird (siehe @sec-github): "Version Control"
+
+![Neues Projekt eröffnen](images/Screenshot%20(39).png){#fig-new-project}
+
+-   Vorteile:
+    -   Ein Hauptordner für ganzes Projekt
+    -   R kann Einstellung pro Projekt speichern
+    -   R weiss, welche Skripte, Daten etc. zu welchem Projekt gehören
+    -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
--   Pfade mit dem Projekt `here: library(here)`
-    -   here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK
-    -   `Churn <- read_table(here("Daten", "Churn.csv"))`
-    
-## R-Skript vs. Markdown / Quarto
--   Skripte für reine Analysen, Text muss auskommentiert werden (analog zu SPSS-Syntax)
--   Markdown / Quarto: Primär Text-Dokumente, Code muss speziell eingefügt werden
+-   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind verpönt, weil nicht anwendbar auf anderen Geräte / für andere Benutzer
+-   Allgemein gültige Pfade mit dem Projekt `here: library(here)`
+    -   "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`"
+    -   Daten einlesen mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind
 
 ## Base R vs. Pakete ("libraries")
 
--   Base R (Basisinstallation) kommt bereits mit sehr vielen Anwendungen
+-   Basisinstallation ist "Base R" ({base}); kommt bereits mit sehr vielen Anwendungen
+-   Weitere bereits installierte Pakete:
+    -   {stats} für statistische Anwendungen
+    -   {graphics} für einfache Abbildungen
 -   Verschiedene mehr oder weniger spezielle Anwendungen benötigen aber spezielle Pakete
 -   Paket installieren (nur beim ersten Mal): `install.packages("ggplot2")`
--   Paket laden für Nutzung: `library(ggplot2)` (**Achtung**: Keine Anführungszeichen)
+-   Paket laden für Nutzung: `library(ggplot2)` (Keine Anführungszeichen nötig)
 -   Achtung, wenn verschiedene Pakete *Funktionen mit gleichem Namen* verwenden!
--   Dann muss das Paket mit zwei Doppelpunkten vorangestellt werden:
+-   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird):
     -   `dplyr::filter()`
     -   `stats::filter()`
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig...
+-   Einige Funktionen kommen auch identisch in versch. Paketen vor!
 
 # Daten in R
 
-## Einfache Eingabe und Zuweisung an *Objekte*
+## Einfache Eingabe und Zuweisung an *Objekte* {#sec-objekte}
 
 -   Normale Eingabe von Code in Konsole:
 
@@ -111,34 +130,44 @@ knitr::opts_chunk$set(
 1 + 2
 ```
 
-Zuweisung des Werts an Objekt "x" mit Pfeil:
+-   Zuweisung des Werts an Objekt "x" mit Pfeil:
 
 ```{r, echo = TRUE}
 x <- 1 + 2
 x
 ```
 
-Benutzung des Objekts "x":
+-   Benutzung des Objekts "x":
 
 ```{r, echo = TRUE}
 x + 4
 ```
 
-Komplizierteres:
+-   Eingabe mehrere Werte als Vektor:
 
 ```{r, echo = TRUE}
+y <- c(4, -4)
+y
+```
+
+-   Komplizierteres:
+
+```{r, echo = TRUE}
+# x (3) plus 4 und minus 4, ergibt zwei Werte
 x + c(4,-4)
+
+# Gleiches Resultat, weil y vorher als 4 / -4 definiert
+x + y
 ```
 
 -   Code ausführen
     -   Entweder in R Skript mit Ctrl + Enter
     -   Oder in Konsole individuell
+-   *Objekte können geschachtelt werden!*
 
 ## Datenformate
 
--   R kann Informationen in verschiedenen Formaten speichern
-        -   Vektoren
-        -   Matrizen
+-   R kann Informationen in verschiedenen Formaten speichern - Vektoren - Matrizen
 
 ```{r, echo = TRUE}
 d = seq(from = 1,to = 12) # Vektor mit Zahlen von 1 bis 12
@@ -155,9 +184,7 @@ str(m) # Struktur von "m"
 
 ## Importieren von Daten
 
--   Für uns sind am ehesten "klassische" Datensätze relevant
-        -   Spalten sind Variablen
-        -   Zeilen sind Beobachtungen / Fälle
+-   Für uns sind am ehesten "klassische" Datensätze relevant - Spalten sind Variablen - Zeilen sind Beobachtungen / Fälle
 -   Je nach Dateiformat sind zum Import Pakete notwendig (oder zumindest hilfreich)
 -   Manuell / quick and dirty: Unten rechts den entsprechenden Ablageordner suchen -\> Klicken -\> "Import dataset"
 
@@ -186,8 +213,6 @@ load(here("Daten", "Treibstoffpreise_CH.rda"))
 ```{r}
 # Import von SPSS
 car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
-
-car_sales
 ```
 
 ## Dimensionen und Eigenschaften von Matrizen und data frames
@@ -210,9 +235,6 @@ length(iris)
 class(iris)
 head(iris) # Zeigt erste 6 Beobachtungen
 tail(iris) # Zeigt letzte 6 Beobachtungen
-```
-
-```{r, echo = TRUE}
 summary(iris)
 ```
 
@@ -221,23 +243,31 @@ summary(iris)
 ## Einfache deskriptive Statistiken
 
 ```{r, echo = TRUE}
-# Mittelwerte
+# Mittelwert von Sepal.Length in iris
 mean(iris$Sepal.Length)
 
+# Mittelwert als Objekt abspeichern
 sepal_length_mean <- mean(iris$Sepal.Length)
 sepal_length_mean
 
-# Median
+# Ditto Median
 sepal_length_median <- median(iris$Sepal.Length)
 sepal_length_median
 
+# Einfache Zusammenfassung der Variable
 summary(iris$Sepal.Length)
 ```
 
+-   Alternative z.B. mit dem Paket {vtable}
+
 ```{r, echo = TRUE}
-# Alternative mit dem Paket "vtable"
+# Zusammenfassung der Variablen (inkl. Klasse)
 vtable:::vtable(iris)
+
+# Summary statistics
 vtable:::sumtable(iris)
+
+# Summary statistics, getrennt nach "Species"
 vtable:::sumtable(iris,
                   group = 'Species', # summary statistics groupiert nach Variable "Species"
                   group.test = TRUE) # Zeigt statistische Signifikanztests zwischen den Gruppen
@@ -248,44 +278,88 @@ vtable:::sumtable(iris,
 -   Einfache Häufigkeitstabellen sind in R nicht gleich einfach wie in SPSS (siehe @sec-schwaechen)
 
 ```{r, echo = TRUE}
+# Mit Basisfunktion "table"
 table(iris$Species)
+```
 
+-   Alternative mit Paket {janitor}
+
+```{r}
 janitor::tabyl(iris$Species)
 
-# Alternative mit tidyverse-Stil
+# Alternative Schreibweise mit tidyverse-Stil
 iris |> 
   janitor::tabyl(Species)
 ```
 
+## Kreuztabellen
+
 ```{r}
-# Kreuztabellen
+# Daten laden
 data("ToothGrowth") # Load training data "Toothgrowth" (from guinea pigs)
+
 table(ToothGrowth$supp, ToothGrowth$dose)
 ```
 
 # Abbildungen
 
+-   Für einfache Anwendungen ist `plot()` (aus dem Standardpaket {graphics}) genügend; gibt schon einiges her
+-   Mehr Individualisierung mit Paket `ggplot2` (@sec-ggplot)
+-   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species)
+
+```{r}
+#| label: fig-iris-pairs
+#| fig-cap: "Pairs-Plot aller Variablen in iris"
+
+plot(iris)
+```
+
+```{r}
+#| label: fig-iris-species
+#| fig-cap: "Säulendiagramm 'Species'"
+
+plot(iris$Species)
+```
+
 ## Histogramm
 
--   Plots mit Base R geben schon einiges her
--   Mehr Individualisierung mit Paket `ggplot2`
+-   Dazu weitere Beschriftungen mit `xlab` (Label der X-Achse), `ylab` und `main`.
 
 ```{r, echo = TRUE}
+#| label: fig-iris-hist-sepallength
+#| fig-cap: "Histogramm Sepal Length mit Mittelwert (rot)"
+
+
 hist(iris$Sepal.Length,
      xlab = "Länge in cm",
      ylab = "Häufigkeit",
      main = "Sepal Length")
+
+# Horizontale Linie einfügen
+abline(h = mean(iris$Sepal.Length), # Höhe der Linie = Mittelwert 
+       col="red", # Farbe der Linie
+       lwd = 2) # Dicke des Striches
 ```
 
 ## Boxplot
 
 -   Für mehr Übersichtlichkeit Code umbrechen!
--   Zwei Variablen mit Tilde (~) trennen
+-   Zwei Variablen mit Tilde (\~) trennen
 
 ```{r, echo = TRUE}
-boxplot(iris$Sepal.Length, # Erste Schreibweise, Data nicht explizit zugewiesen
+#| label: fig-iris-boxplot-sepallength
+#| fig-cap: "Boxplot Sepal Length"
+
+# Erste Schreibweise, Data nicht explizit zugewiesen
+boxplot(iris$Sepal.Length,
         ylab = "Länge in cm",
         main = "Sepal Length")
+
+```
+
+```{r}
+#| label: fig-iris-boxplot-sepallength-species
+#| fig-cap: "Boxplot Sepal Length nach Species"
 
 boxplot(Sepal.Length ~ Species,
         data = iris, # Andere Schreibweise, Data explizit zugewiesen
@@ -308,7 +382,7 @@ pairs(iris)
 pairs(iris[,1:4])
 ```
 
-# Schwächen von R (zumindest im Vergleich zu SPSS){#sec-schwaechen}
+# Schwächen von R (zumindest im Vergleich zu SPSS) {#sec-schwaechen}
 
 -   Keine Labels
 -   Umgang mit fehlenden Werte
@@ -316,11 +390,8 @@ pairs(iris[,1:4])
 -   Pakete können umgeschrieben werden, Code kann sich ändern
 -   Einfache Häufigkeits- und Kreuztabellen mit Prozenten sind nicht gleich schnell
 
-```{r, echo = TRUE}
-
-```
-
 # Weitere Objekte
+
 ## Resultate von Analysen
 
 -   Objekte in R müssen nicht zwingend Zahlen oder Datensätze sein. Als Objekte können auch gespeichert werden:
@@ -328,13 +399,16 @@ pairs(iris[,1:4])
     -   Zeitreihen
     -   Listen
     -   etc.
-        
+
 ```{r}
 # Einfache lineare Regression
 fit_iris <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data = iris)
 
 # Zusammenfassung des Modells
 summary(fit_iris)
+
+plot(fit_iris$residuals)
+plot(fit_iris$coefficients)
 ```
 
 -   Auf einzelne Objekte der Resultate kann wiederum zugegriffen werden
@@ -343,18 +417,69 @@ summary(fit_iris)
 fit_iris$coefficients
 ```
 
+## Zeitreihen
 
-# Zeitreihen
 -   Sieht ähnlich aus wie normaler Datensatz, ist aber für R als Zeitreihe erkennbar
+
 ```{r}
 # Zeitreihe
 data("AirPassengers")
 AirPassengers
 str(AirPassengers)
 ```
-        
+
+# Wo finde ich Hilfe?
+
+-   bibs\@zhaw.ch
+-   Google
+-   R-Hilfe: In der Konsole mit Fragezeichen den Begriff eingeben, z.B. `?median` (@fig-help-median}), `?boxplot` (@fig-help-boxplot) oder `?filter` (@fig-help-filter).
+
+![Hilfe zu median (Paket {stats})](images/Screenshot%20(37).png){#fig-help-median}
+
+![Hilfe zu boxplot (Paket {graphics})](images/Screenshot%20(36).png){#fig-help-boxplot}
+
+![Hilfe zu filter (zwei Pakete; davon das gewünschte Auswählen)](images/Screenshot%20(38).png){#fig-help-filter}
 
 # Weiterführendes
+
+## R-Skript vs. Markdown / Quarto
+
+-   Skripte für reine Analysen, Text muss auskommentiert werden (analog zu SPSS-Syntax)
+
+```{r}
+1 + 1 # Code auskommentieren mit hashtag
+
+# Mittelwert der Zahlen 1, 2, 3, 4 berechnen
+mean(c(1,2,3,4))
+
+# Gleiches Resultat
+mean(1:4)
+```
+
+-   Markdown / Quarto: Primär Text-Dokumente, Code muss eingefügt werden in sogenannten "Chunks" (in Quarto sind auch Chunks für Python und andere Sprachen möglich!)
+-   Python funktioniert ähnlich, aber anders als R, siehe folgender Chunk (aber ausgaben in diesem Dokument scheint leicht anderer Logik zu folgen als bei einem R-Chunk)
+
+```{python}
+# Statistikpaket für python laden
+import statistics
+
+# Daten definieren
+data1 = [1, 3, 4, 5, 7, 9, 2]
+
+# Mittelwert ausrechnen
+statistics.mean(data1)
+
+# Auch mit python können in RStudio Objekte definiert werden
+x = statistics.mean(data1)
+
+# x ausgeben
+x
+
+# Printen mit Text
+print("Mean is:", x)
+```
+
+-   Erster Code ist in R, zweiter in Python
 
 ## Tidyverse
 
@@ -367,7 +492,7 @@ str(AirPassengers)
     -   (entspricht sowieso dem, was wir von unseren Daten normalerweise kennen)
 -   Eigene Syntaxstruktur
 -   Zusammengesetzt aus verschiedenen Paketen (tidyverse = ganzes Universum)
-    -   ggplot2 (gg = Grammar of Graphics, siehe @sec-ggplot
+    -   ggplot2 (gg = Grammar of Graphics, siehe @sec-ggplot)
 
     -   dplyr: Datenmanipulation
 
@@ -439,7 +564,8 @@ ggplot(iris) +
 -   Output in div. Formaten möglich (Word, PDF, Folien, HTML)
 -   Kein Copy/Paste von SPSS zu Excel zu Word!
 
-## Github
+## Github {#sec-github}
 
+-   Versionsontrolle
 -   Code teilen mit anderen Personen auf <https://github.com>
 -   Eigene Version für ZHAW: <https://github.zhaw.ch/>
