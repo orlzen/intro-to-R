@@ -404,6 +404,35 @@ boxplot(Sepal.Length ~ Species,
         main = "Sepal Length nach Species")
 ```
 
+## Streudiagramm
+
+-   Metrische Variablen gegeneinander
+-   Dritte Variable ("Species") als Farbe
+-   Keine Legende standardmässig, muss manuell erstellt werden und ist nicht sehr intuitiv (weil zwei getrennte Objekte erstellt werden ("plot" und "legend"), müssen die Farben aufeinander abgestimmt werden!)
+
+```{r}
+#| label: fig-iris-scatter-sepal-petal
+#| fig-cap: "Streudiagramm Sepal Length gegen Petal Length"
+
+plot(x = iris$Sepal.Length,
+     y = iris$Petal.Length,
+     xlab = "Sepal Length",
+     ylab = "Petal Length",
+     main = "Streudiagramm Sepal Length gegen Petal Length",
+     col = iris$Species, # Punkte gefärbt nach Species
+     pch = 20) # Schwarze Punkte statt leere Kreise
+
+legend("bottomright", # legende ist unten rechts
+       lty = 1, # definiert die Linienart der Legende
+       col = c("black", "red", "lightgreen"),
+       legend = c("setosa", 
+               "versicolor",
+               "virginica"))
+```
+
+-   Reihenfolge und Farbe der Legende muss manuell mit den Kategorien und Farben in der Abbildung abgestimmt werden!
+-   Beim genauen Hinsehen stimmen die Farben nicht 1:1 überein!
+
 ## Pairs
 
 -   Ersten Überblick gewinnen, nicht zu viele Variablen gleichzeitig!
@@ -588,7 +617,7 @@ print("Mean is:", x)
 -   Eigene Syntaxstruktur, aufbauend / hintereinander verknüpft, weniger verschachtelt als base R (wo man beim lesen mehrerer Funktionen "von innen" anfangen muss):
     1.  Welche Daten sollen benutzt werden?
     2.  Was soll damit gemacht werden?
-    3.  Verknüpfung mit dem "Pipe"-Operator (`|>` (früher `%>%`))
+    3.  Verketten mit dem "Pipe"-Operator (`|>`, früher `%>%`); bedeutet sozusagen "dann mach das..."
 -   Codebeispiel für base R und tidyverse: Im iris-Datensatz die Species "virginica" filtern und daraus eine neue Variable bilden mit der Summe aus "Sepal Length" und "Sepal Width", diese Daten neu abspeichern
 
 ```{r}
@@ -598,7 +627,10 @@ library(tidyverse)
 data("iris")
 
 # Mit base R
-virginica_base <- transform(subset(iris, Species == "virginica"), sepallength_width = (Sepal.Length + Sepal.Width), petallength_width = (Petal.Length + Petal.Width))
+virginica_base <- transform(subset(iris, 
+                                   Species == "virginica"),
+                            sepallength_width = (Sepal.Length + Sepal.Width),
+                            petallength_width = (Petal.Length + Petal.Width))
 
 View(virginica_base)
 
@@ -614,7 +646,7 @@ View(virginica_tidy)
 ```
 
 -   Zusammengesetzt aus verschiedenen Paketen (tidyverse = ganzes Universum), je nach Bedürfnis können auch nur einzelne Pakete geladen werden
-    -   ggplot2 (gg = Grammar of Graphics, siehe @sec-ggplot)
+    -   {ggplot2} (gg = Grammar of Graphics, siehe @sec-ggplot)
 
     -   {tidyr}: Daten bereinigen / Umformatieren
 
