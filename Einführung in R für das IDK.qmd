@@ -585,10 +585,11 @@ print("Mean is:", x)
 ## Tidyverse {#sec-tidyverse}
 
 -   Meist verbreitetes Paket für Datenaufbereitung, -analyse und -visualisierung
--   Eigene Syntaxstruktur, aufbauend:
-    -   Welche Daten sollen benutzt werden?
-    -   Was soll damit gemacht werden?
-    -   Verknüpfung mit dem "Pipe"-Operator (`|>` (früher `%>%`))
+-   Eigene Syntaxstruktur, aufbauend / hintereinander verknüpft, weniger verschachtelt als base R (wo man beim lesen mehrerer Funktionen "von innen" anfangen muss):
+    1.  Welche Daten sollen benutzt werden?
+    2.  Was soll damit gemacht werden?
+    3.  Verknüpfung mit dem "Pipe"-Operator (`|>` (früher `%>%`))
+-   Codebeispiel für base R und tidyverse: Im iris-Datensatz die Species "virginica" filtern und daraus eine neue Variable bilden mit der Summe aus "Sepal Length" und "Sepal Width", diese Daten neu abspeichern
 
 ```{r}
 # Ganzes Tidyverse laden
@@ -596,14 +597,23 @@ library(tidyverse)
 # Daten laden
 data("iris")
 
-# Erstelle neue Variable "mean" in den neuen Daten "iris2"
-iris2 <- iris |> # Nimm die Daten "iris" und schreibe eine neues Objekt "iris2"
-  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>  # Berechne die Summe aus "Sepal.Length" und "Sepal.Width" für jeden Fall und nenne die neue Variable "sepallength_width"
-  group_by(Species) |> # Gruppiere die Daten nach "Species"
-  mutate(mean = mean(sepallength_width)) # Berechne (für die gruppierten Daten!) den Mittelwert von "sepallength_width" und nenne diese neue Variable "mean"
+# Mit base R
+virginica_base <- transform(subset(iris, Species == "virginica"), sepallength_width = (Sepal.Length + Sepal.Width), petallength_width = (Petal.Length + Petal.Width))
+
+View(virginica_base)
+
+# Mit tidyverse
+virginica_tidy <- iris |> 
+  filter(Species == "virginica") |> # 
+  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   # Berechne die Summe aus "Sepal.Length" und "Sepal.Width" und nenne die neue Variable "sepallength_width"
+  mutate(petallength_width = (Petal.Length + Petal.Width))
+
+View(virginica_tidy)
+
+# Randnotiz: Tidyverse beginnt die Zeilennummerierung wieder bei 1, mit base R bleibt die Zeilennummerierung wie im ursprünglichen Datensatz, fängt bei 101 an
 ```
 
--   Zusammengesetzt aus verschiedenen Paketen (tidyverse = ganzes Universum)
+-   Zusammengesetzt aus verschiedenen Paketen (tidyverse = ganzes Universum), je nach Bedürfnis können auch nur einzelne Pakete geladen werden
     -   ggplot2 (gg = Grammar of Graphics, siehe @sec-ggplot)
 
     -   {tidyr}: Daten bereinigen / Umformatieren
