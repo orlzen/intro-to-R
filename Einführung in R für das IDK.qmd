@@ -706,6 +706,8 @@ ggplot(iris) +
 ## Git und github {#sec-github}
 
 -   System zur Kollaboration an Code und Versionsontrolle
+-   Aus Software Center "Git" installieren
+-   Ist in RStudio integriert (oben rechts "Git"), braucht kein weitere Programm
 -   <https://github.com> resp. eigene Version für ZHAW: <https://github.zhaw.ch/>
 -   Einführung speziell für R z.B. hier: <https://happygitwithr.com/index.html>
 -   Im Intranet der ZHAW: <https://zhaw.sharepoint.com/:b:/r/sites/osc/Freigegebene%20Dokumente/2021_10_27%20-%20Git%20why%20and%20how.pdf?csf=1&web=1&e=2EehhW> oder <https://intra.zhaw.ch/departemente/school-of-engineering/services/dienste-tools/soe-it-infrastruktur/git-umgebung/>
