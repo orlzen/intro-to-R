@@ -21,6 +21,33 @@ lang: "de-DE"
 ## To do
 
 -   Deskriptive Analysen, alltägliche Anwendungen für uns
+    -   Umgang mit missing values 
+        -   ("MISSING VALUES S1 (99999997).")
+    -   Recodierungen von Variablen in neue Variablen
+        -   RECODE S9 (2 = 1.5) (3 = 2) (4 = 2.5) (5 = 3) (6 = 3.5) (7 = 4) (8 = 4.5) (9 = 5) (10 = 5.5) (11 = 6) INTO pol_note_rec.
+        -   EXECUTE.
+        -   VARIABLE LABELS pol_note_rec "Benotung Polizei - recodiert".
+        -   VALUE LABELS pol_note_rec 0 "Unsicher" 1 "Sicher".
+        -   oder
+        -   IF (Q4_06 = 1) cybercrime_was_identitaet = 0.
+        -   IF (CODERESP = 18695) cybercrime_was_identitaet = 1.
+        -   IF (CODERESP = 27740) cybercrime_was_identitaet = 1.
+        -   IF (CODERESP = 9974) cybercrime_was_identitaet = 1.
+        -   IF (CODERESP = 38720) cybercrime_was_identitaet = 1.
+        -   IF (CODERESP = 17895) cybercrime_was_identitaet = 1.
+    -   Recodierung nur wenn... ("do if" in SPSS)
+    -   Neuberechnung von neuen Variablen `(dplyr::mutate?)`
+        -   COMPUTE sex_gewichtung = SEX.
+        -   EXECUTE.
+        -   IF (sex_gewichtung = 3 AND sex_SRPH = "Frau") sex_gewichtung = 2.
+        -   IF (sex_gewichtung = 3 AND sex_SRPH = "Mann") sex_gewichtung = 1.
+        -   EXECUTE.
+        -   VALUE LABELS sex_gewichtung 1 "männlich" 2 "weiblich".
+        -   VARIABLE LABELS sex_gewichtung 'Geschlecht zur Gewichtung (Kombination aus Befragungs- und Adressdaten, anderes durch SRPH ersetzt)'.
+    -   Labels
+        -   Variablenlabels
+        -   Value labels (möglich?)
+-   Umgang mit Strings?
 -   Mehr Grundsätzliches am Anfang, weniger Fortgeschrittenes
 -   Alle benutzten Codes aus den Chunks in R Skript übertragen
 
@@ -614,11 +641,13 @@ print("Mean is:", x)
 ## Tidyverse {#sec-tidyverse}
 
 -   Meist verbreitetes Paket für Datenaufbereitung, -analyse und -visualisierung
--   Eigene Syntaxstruktur, aufbauend / hintereinander verknüpft, weniger verschachtelt als base R (wo man beim lesen mehrerer Funktionen "von innen" anfangen muss):
+-   Eigene Syntaxstruktur[^1], aufbauend / hintereinander verknüpft, weniger verschachtelt als base R (wo man beim lesen mehrerer Funktionen "von innen" anfangen muss):
     1.  Welche Daten sollen benutzt werden?
     2.  Was soll damit gemacht werden?
     3.  Verketten mit dem "Pipe"-Operator (`|>`, früher `%>%`); bedeutet sozusagen "dann mach das..."
 -   Codebeispiel für base R und tidyverse: Im iris-Datensatz die Species "virginica" filtern und daraus eine neue Variable bilden mit der Summe aus "Sepal Length" und "Sepal Width", diese Daten neu abspeichern
+
+[^1]: Es gibt durchaus Stimmen, die sich gegenüber Tidyverse kritisch äussern mit dem Argument, es sei unnötig, mache alles komplizierter, und mit Base R sei auch alles bereits möglich, was das Tidyverse kann.
 
 ```{r}
 # Ganzes Tidyverse laden
