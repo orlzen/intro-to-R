@@ -48,7 +48,14 @@ lang: "de-DE"
         -   Variablenlabels
         -   Value labels (möglich?)
 -   Umgang mit Strings?
+-   Objekte nicht nur numerisch zuweisen, sondern auch mit strings und logisch
+-   Matrizen haben immer gleichen Datentyp in Spalte, data frame können verschiedene Daten haben (numerisch, string, logisch, faktoren)
+-   Datentyp Faktoren
+-   Lists are collections of objects, which can be vectors, matrices, data frames
+-   Nested data?
 -   Mehr Grundsätzliches am Anfang, weniger Fortgeschrittenes
+-   Datensatz "USArrests" laden
+    -   Daten sind links beschriftet ohne Variable
 -   Alle benutzten Codes aus den Chunks in R Skript übertragen
 
 ```{r}
@@ -61,6 +68,7 @@ library(ggplot2) # Schöne Abbildungen
 library(vtable) # Beschreibung von Daten
 library(janitor) # Für schöne Tabellen
 library(haven) # Import von SPSS, Stata etc.
+library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 ```
 
 ```{r setting}
@@ -71,6 +79,28 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 ```
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+# Daten laden
+
+# csv
+Churn <- readr::read_table(here("Daten", "Churn.csv"))
+
+# txt
+Arrivals <- readr::read_table(here("Daten", "Arrivals.txt"))
+
+# Excel
+alpenquer <- readxl::read_excel(here("Daten", "Alpenquerender_Gueterverkehr_Schiene.xls"))
+
+# rda (eigenes R-Format)
+load(here("Daten", "Treibstoffpreise_CH.rda"))
+# Daten müssen hier keinem Objekt mehr zugewiesen werden!
+```
+
 
 ## Vorbereitung
 
@@ -84,6 +114,23 @@ Dies ist eine kurze Einleitung in R und RStudio für das IDK. Dazu gehören die 
     -   Churn.csv
     -   Treibstoffpreise_CH.rda
 -   app.R (shiny-Demo)
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+download_dir(
+  path = here("Daten"),
+  output_name = "Beispieldaten",
+  button_label = "Daten herunterladen",
+  button_type = "success",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
 
 ## R und RStudio
 
@@ -109,6 +156,7 @@ Dies ist eine kurze Einleitung in R und RStudio für das IDK. Dazu gehören die 
 -   Praktisch keine Menuführung für Analysen (Ausnahme: Erweiterung für Abbildungen)
 -   R ist case sensitive! "x" ist nicht das gleiche wie "X"!
 -   Nicht wie in SPSS versch. Fenster für Syntax, Output und Daten, sondern alles in einem Fenster (Ausnahmen sind möglich, z.B. zusätzliches Fenster für Abbildungen)
+-   Keine Variablenansicht
 
 ## Projekte {#sec-projekte}
 
@@ -149,7 +197,7 @@ Dies ist eine kurze Einleitung in R und RStudio für das IDK. Dazu gehören die 
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig...
 -   Einige Funktionen kommen auch identisch in versch. Paketen vor!
 
-# Daten in R
+# Daten in R: Objekte
 
 -   R kann verschiedene Daten *gleichzeitig laden* (oben rechts in "Environment"; @fig-environment-list und @fig-environment-grid, je nach Darstellung), diese können *verschiedene Typen* sein:
     -   Klassische Datensätze mit Fällen in Zeilen und Variablen in Spalten (meistens "data frame" oder "tibble" genannt in RStudio, hier z.B. "alpenquer", "Arrivals", "car_sales", "Churn")
@@ -250,8 +298,23 @@ str(n) # Struktur von "n"
 -   Mit base R: `Objekt[Zeile, Spalte]` -\> z.B. `m[1,3]` ergibt Inhalt der ersten Zeile, dritte Spalte
 -   Einzelne Zeile/Beobachtung auswählen: `m[2,]` -\> zweite Zeile/Beobachtung, keine Spalte ausgewählt
 -   Einzelne Spalte/Variable auswählen: `m[, 3]` -\> dritte Spalte/Variable, keine Zeile/Beobachtung ausgewählt
--   Alternative für Spalten/Variablen, wenn das Objekt ein data fram ist: `df$$Var1` -\> Spalte/Variable genannt "Var1" ausgewählt
+-   Einzelen Spalte/Variable auswählen mit Variablenname: `m[, "Var1"]` -> Spalte mit Namen "Var1", keine Zeile/Beobachtung ausgewählt
+-   Alternative für Spalten/Variablen, wenn das Objekt ein data frame ist: `df$Var1` -\> Spalte/Variable genannt "Var1" ausgewählt
 -   Je nach benutztem Paket sind andere Schreibweisen möglich, z.B. bei Benutzung von Paketen aus dem "Tidyverse" (siehe @sec-tidyverse)
+
+```{r}
+data(iris)
+
+# Diese drei Befehle sind identisch!
+
+mean(iris[, 1]) # 1. Spalte
+mean(iris[,"Sepal.Length"]) # Spalte mit Name "Sepal.Length"
+mean(iris$Sepal.Length) # Spalte mit Name "Sepal.Length"
+```
+
+-   Analog kann auch auf Elemente von anderen Objekte zugegriffen werden, z.B. auf Elemente eines Outputs einer Operation, die als Listen gespeichert werden:
+    -   `fit_iris$coefficients` wird alle Elemente aus dem "Unterelement" `coefficients` des Objekts `fit_iris` (bspw. ein Resultat einer linearen Regression) wiedergeben.
+    -   Um die Namen von Elementen von Objekten zu sehen: `names(objekt)`. (Je nach Art des Objektes zeigt es anderes an, bei data frames z.b. einfach die Variablennamen, bei Listen die versch. Elemente etc.)
 
 ## Importieren von Daten
 
@@ -375,7 +438,8 @@ table(ToothGrowth$supp, ToothGrowth$dose)
 # Abbildungen
 
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
--   Mehr Individualisierung mit Paket `ggplot2` (@sec-ggplot)
+-   Mehr Individualisierung mit Paket {ggplot2} (@sec-ggplot)
+-   vorschlag von bibs: Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
 -   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species)
 -   Möglichkeit, die Abbildungen gleich zu exportieren und in einem Ordner zu speichern (für Benutzung in einer anderen Anwendung)
     -   Manuell (@fig-plot-export-manual)
@@ -526,11 +590,11 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 # Schwächen von R (zumindest im Vergleich zu SPSS) {#sec-schwaechen}
 
--   Keine Labels
--   Umgang mit fehlenden Werte
+-   Keine Labels für numerisch codierte kategoriale Variabeln (kategoriale Variablen als Faktor-Variablen speichern!)
+-   Umgang mit fehlenden Werten, keine individuelle Setzung von "missing" für versch. numerische Werte möglich
 -   Gewichtung von Daten?
 -   Pakete können umgeschrieben werden, Code kann sich ändern
--   Einfache Häufigkeits- und Kreuztabellen mit Prozenten sind nicht gleich schnell
+-   Einfache Häufigkeits- und Kreuztabellen mit Prozenten sind nicht gleich schnell wie in SPSS
 
 # Weitere Objekte
 
@@ -543,6 +607,8 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
     -   etc.
 
 ```{r}
+data(iris)
+
 # Einfache lineare Regression
 fit_iris <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data = iris)
 
@@ -773,9 +839,10 @@ ggplot(iris) +
 -   Einführung speziell für R z.B. hier: <https://happygitwithr.com/index.html>
 -   Im Intranet der ZHAW: <https://zhaw.sharepoint.com/:b:/r/sites/osc/Freigegebene%20Dokumente/2021_10_27%20-%20Git%20why%20and%20how.pdf?csf=1&web=1&e=2EehhW> oder <https://intra.zhaw.ch/departemente/school-of-engineering/services/dienste-tools/soe-it-infrastruktur/git-umgebung/>
 
-## Shiny
+## Shiny{#sec-shiny}
 
 -   App zur Datenvisualisierung, -simulation etc.
 -   Kann in RStudio ausgeführt werden, aber auch in Homepages eingebaut werden
 -   Infos hier: <https://shiny.rstudio.com/tutorial/> und hier <https://mastering-shiny.org/>
 -   Siehe `app.R` -\> Öffnen in RStudio -\> Oben rechts auf "Run App" klicken
+-   Z.B. auch im Einsatz beim statistischen Amt der Stadt Zürich: <https://statzuerich.shinyapps.io/kali/>
