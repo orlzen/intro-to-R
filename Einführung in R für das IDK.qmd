@@ -1,12 +1,13 @@
 ---
-title: "Einführung in R für IDK"
+title: "Einführung in R für das IDK"
 author: "Lorenz Biberstein, IDK, ZHAW"
 date: "`r Sys.time()`"
 date-format: medium
 format:
   html:
     embed-resources: true
-always_allow_html: true
+    df-print: kable
+always_allow_html: paged
 toc: true
 toc-depth: 5
 toc-title: "Inhalt"
@@ -14,49 +15,11 @@ toc-location: left
 number-sections: true
 number-depth: 3
 lang: "de-DE"
+bibliography: references.bib
+csl: apa.csl
 ---
 
 # Einleitung
-
-## To do
-
--   Deskriptive Analysen, alltägliche Anwendungen für uns
-    -   Umgang mit missing values 
-        -   ("MISSING VALUES S1 (99999997).")
-    -   Recodierungen von Variablen in neue Variablen
-        -   RECODE S9 (2 = 1.5) (3 = 2) (4 = 2.5) (5 = 3) (6 = 3.5) (7 = 4) (8 = 4.5) (9 = 5) (10 = 5.5) (11 = 6) INTO pol_note_rec.
-        -   EXECUTE.
-        -   VARIABLE LABELS pol_note_rec "Benotung Polizei - recodiert".
-        -   VALUE LABELS pol_note_rec 0 "Unsicher" 1 "Sicher".
-        -   oder
-        -   IF (Q4_06 = 1) cybercrime_was_identitaet = 0.
-        -   IF (CODERESP = 18695) cybercrime_was_identitaet = 1.
-        -   IF (CODERESP = 27740) cybercrime_was_identitaet = 1.
-        -   IF (CODERESP = 9974) cybercrime_was_identitaet = 1.
-        -   IF (CODERESP = 38720) cybercrime_was_identitaet = 1.
-        -   IF (CODERESP = 17895) cybercrime_was_identitaet = 1.
-    -   Recodierung nur wenn... ("do if" in SPSS)
-    -   Neuberechnung von neuen Variablen `(dplyr::mutate?)`
-        -   COMPUTE sex_gewichtung = SEX.
-        -   EXECUTE.
-        -   IF (sex_gewichtung = 3 AND sex_SRPH = "Frau") sex_gewichtung = 2.
-        -   IF (sex_gewichtung = 3 AND sex_SRPH = "Mann") sex_gewichtung = 1.
-        -   EXECUTE.
-        -   VALUE LABELS sex_gewichtung 1 "männlich" 2 "weiblich".
-        -   VARIABLE LABELS sex_gewichtung 'Geschlecht zur Gewichtung (Kombination aus Befragungs- und Adressdaten, anderes durch SRPH ersetzt)'.
-    -   Labels
-        -   Variablenlabels
-        -   Value labels (möglich?)
--   Umgang mit Strings?
--   Objekte nicht nur numerisch zuweisen, sondern auch mit strings und logisch
--   Matrizen haben immer gleichen Datentyp in Spalte, data frame können verschiedene Daten haben (numerisch, string, logisch, faktoren)
--   Datentyp Faktoren
--   Lists are collections of objects, which can be vectors, matrices, data frames
--   Nested data?
--   Mehr Grundsätzliches am Anfang, weniger Fortgeschrittenes
--   Datensatz "USArrests" laden
-    -   Daten sind links beschriftet ohne Variable
--   Alle benutzten Codes aus den Chunks in R Skript übertragen
 
 ```{r}
 #| echo: false
@@ -69,6 +32,7 @@ library(vtable) # Beschreibung von Daten
 library(janitor) # Für schöne Tabellen
 library(haven) # Import von SPSS, Stata etc.
 library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
+library(expss) # Für SPSS-ähnliche Tabellen
 ```
 
 ```{r setting}
@@ -81,9 +45,13 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
+#| echo: FALSE
+# knitr::purl(input = "Einführung in R für das IDK.qmd", output = "Einführung in R für das IDK - Code.R", documentation = 0)
+```
+
+```{r}
 #| echo: false
 #| warning: false
-
 
 # Daten laden
 
@@ -99,26 +67,29 @@ alpenquer <- readxl::read_excel(here("Daten", "Alpenquerender_Gueterverkehr_Schi
 # rda (eigenes R-Format)
 load(here("Daten", "Treibstoffpreise_CH.rda"))
 # Daten müssen hier keinem Objekt mehr zugewiesen werden!
-```
 
+# Import von SPSS
+car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
+```
 
 ## Vorbereitung
 
 Dies ist eine kurze Einleitung in R und RStudio für das IDK. Dazu gehören die folgenden Dateien:
 
--   Einführung in R für das IDK.R (Beispielcodes)
+-   R-Skript mit Beispielcode: "Einführung in R für das IDK - Codes.R"
 -   Datensätze in verschiedenen Formaten:
-    -   Alpenquerender_Gueterverkehr_Schiene.xlsx
-    -   Arrivals.txt
-    -   car_sales.sav
-    -   Churn.csv
-    -   Treibstoffpreise_CH.rda
--   app.R (shiny-Demo)
+    -   "Alpenquerender_Gueterverkehr_Schiene.xlsx"
+    -   "Arrivals.txt"
+    -   "car_sales.sav"
+    -   "Churn.csv"
+    -   "Treibstoffpreise_CH.rda"
+-   shiny-Demo: "app.R"
+
+Die Daten können mit dem untenstehenden Button "Daten herunterladen" heruntergeladen werden. Bitte entpackt das .zip und speichert die Daten ab, idealerweise in einem Ordner namens "Daten", welcher sich in einem Hauptordner befindet, wo das Skript "Einführung in R für das IDK - Codes.R" abgelegt ist.
 
 ```{r}
 #| echo: false
 #| warning: false
-
 
 download_dir(
   path = here("Daten"),
@@ -131,7 +102,6 @@ download_dir(
 )
 ```
 
-
 ## R und RStudio
 
 -   Basisprogramm ist R
@@ -140,48 +110,28 @@ download_dir(
 
 ![R und RStudio im Software Center](images/Screenshot.png){#fig-rstudio-softwarecenter}
 
-![Layout RStudio](images/image-267797392.png){#fig-layout-rstudio}
+![Layout RStudio](images/Screenshot%20(58).png){#fig-layout-rstudio}
 
--   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, siehe @fig-layout-rstudio; Farbe und Schrift lassen sich anpassen!)
+-   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, Farbe und Schrift lassen sich ebenfalls anpassen, siehe @fig-layout-rstudio)
 -   Am wichtigsten:
     -   Skript (hier oben links)
     -   Konsole für freie Eingabe von Code und Output von Analysen (unten links)
-    -   Geladene Daten & Objekte ("Environment"; oben rechts)
+    -   Geladene Daten & Objekte in der Umgebung ("Environment"; oben rechts)
     -   Projektordner ("Files"; unten rechts)
     -   Abbildungen ("Plots"; unten rechts)
 
 ## Kleinere Unterschied zu SPSS
 
--   Skripte (analog zu SPSS-Syntax) und Konsole (für freie Eingabe)
--   Praktisch keine Menuführung für Analysen (Ausnahme: Erweiterung für Abbildungen)
+-   Neben Skripten (analog zu SPSS-Syntax) gibt es eine Konsole (für freie Eingabe)
+-   Praktisch keine Menuführung für Analysen (Ausnahme: Erweiterung für Abbildungen, siehe @sec-esquisse)
 -   R ist case sensitive! "x" ist nicht das gleiche wie "X"!
--   Nicht wie in SPSS versch. Fenster für Syntax, Output und Daten, sondern alles in einem Fenster (Ausnahmen sind möglich, z.B. zusätzliches Fenster für Abbildungen)
--   Keine Variablenansicht
+-   Es gibt nicht wie in SPSS versch. Fenster für Syntax, Output und Daten, sondern alles ist in einem Fenster (Ausnahmen sind möglich, z.B. zusätzliches Fenster für Abbildungen)
+-   Keine Variablenansicht, nur Datenansicht mit `View()`
 
-## Projekte {#sec-projekte}
+## Base R vs. Pakete ("libraries") {#sec-pakete}
 
--   Sehr zu empfehlen, sobald man nicht nur eine einzelne quick and dirty-Analyse machen will: Projekt anlegen
-    -   File -\> New Project -\> (@fig-new-project)
-        -   Auswahl aus verschiedenen Ablagemöglichkeiten. Am einfachsten: "New Directory".
-        -   Falls mit Versionskontrolle gearbeitet wird (siehe @sec-github): "Version Control"
-
-![Neues Projekt eröffnen](images/Screenshot%20(39).png){#fig-new-project}
-
--   Vorteile:
-    -   Ein Hauptordner für ganzes Projekt
-    -   R kann Einstellung pro Projekt speichern
-    -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
-    -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
--   Getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
--   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind verpönt, weil nicht anwendbar auf anderen Geräte / für andere Benutzer
--   Allgemein gültige Pfade mit dem Projekt `here: library(here)`
-    -   "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`"
-    -   Daten einlesen mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind
-
-## Base R vs. Pakete ("libraries")
-
--   Basisinstallation ist "Base R" ({base}); kommt bereits mit sehr vielen Anwendungen
--   Weitere bereits installierte Pakete:
+-   Basisinstallation ist "Base R" ({base}; [-@base]); kommt bereits mit sehr vielen Anwendungen
+-   Weitere bereits installierte Erweiterungen (keine eigenständigen Pakete, die getrennt installiert werden können):
     -   {stats} für statistische Anwendungen
     -   {graphics} für einfache Abbildungen
 -   Verschiedene mehr oder weniger spezielle Anwendungen benötigen aber spezielle Pakete
@@ -196,33 +146,149 @@ download_dir(
 
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig...
 -   Einige Funktionen kommen auch identisch in versch. Paketen vor!
+-   Achtung: Mit jedem benutzten Paket entstehen Abhängigkeiten (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifische Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
+-   Pakete, die auf CRAN ("The Comprehensive R Archive Network", <https://cran.r-project.org/web/packages/available_packages_by_name.html>) sind, haben eine gewisse Qualitätskontrolle durchlaufen. Es lassen sich aber auch individuelle Pakete installieren, die nicht auf CRAN sind (jede:r kann / darf ein R-Paket schreiben).
 
-# Daten in R: Objekte
+## Projekte {#sec-projekte}
 
--   R kann verschiedene Daten *gleichzeitig laden* (oben rechts in "Environment"; @fig-environment-list und @fig-environment-grid, je nach Darstellung), diese können *verschiedene Typen* sein:
-    -   Klassische Datensätze mit Fällen in Zeilen und Variablen in Spalten (meistens "data frame" oder "tibble" genannt in RStudio, hier z.B. "alpenquer", "Arrivals", "car_sales", "Churn")
-    -   Matrizen (z.B. "m")
-    -   Vektoren (z.B. "y")
-    -   Nur ein einzelner Wert (z.B. "sepal_length_mean" oder "x")
-    -   Liste von Werten, die im Gegensatz zu Vektoren genauer spezifiziert sind (z.B. Resultate von Analysen mit Koeffizienten, Parameter etc., z.B. "fit-iris")
+-   Sehr zu empfehlen, sobald man nicht nur eine einzelne quick and dirty-Analyse machen will: Projekt anlegen
+    -   File -\> New Project -\> (@fig-new-project)
+        -   Auswahl aus verschiedenen Ablagemöglichkeiten. Am einfachsten: "New Directory".
+        -   Falls mit Versionskontrolle gearbeitet wird (siehe @sec-github): "Version Control"
 
-![Environment mit verschiedenen geladenen Objekten; Ansicht "List"](images/Screenshot%20(40).png){#fig-environment-list}
+![Neues Projekt eröffnen](images/Screenshot%20(39).png){#fig-new-project alt="Neues Projekt eröffnen"}
 
-![Environment mit verschiedenen geladenen Objekten; Ansicht "Grid"](images/Screenshot%20(42).png){#fig-environment-grid}
+-   Vorteile:
+    -   Ein Hauptordner für ganzes Projekt
+    -   R kann Einstellung pro Projekt speichern
+    -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
+    -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
+-   Getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
+-   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer
+-   Allgemein gültige Pfade mit dem Paket {here} -\> laden am Anfang mit `library(here)`
+    -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`"
+    -   Daten einlesen mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind
 
--   Befehle müssen die zu benutzenden Daten eindeutig identifizieren
-    -   Z.B. `mean(iris$Sepal.Width)` berechnet den Mittelwert der Variable "Sepal.Width" im Datensatz "iris", `median(ToothGrowth$len)` berechnet den Median der Variable "len" im Datensatz "ToothGrowth" etc.
+# Daten in R
+
+## Objekte {#objekte}
+
+R kann verschiedene Daten(sätze) *gleichzeitig laden* (oben rechts in "Environment"; @fig-environment-list und @fig-environment-grid, je nach Darstellung), diese können *verschiedene Typen* sein:
+
+-   Klassische Datensätze mit Fällen in Zeilen und Variablen in Spalten ("data frame" genannt in RStudio, hier z.B. "alpenquer", "Arrivals", "car_sales", "Churn")[^1]
+-   Matrizen (z.B. unten "m"; Matrizen haben immer gleichen Datentyp in den Spalten, data frames können verschiedene Daten haben (numerisch, string, logisch, faktoren))
+-   Vektoren von mehreren Zahlen (z.B. unten "y")
+-   Nur ein einzelner Wert (z.B. "sepal_length_mean" oder "x")
+-   Liste von Werten, die im Gegensatz zu Vektoren genauer spezifiziert sind (z.B. Resultate von Analysen mit Koeffizienten, Parameter etc., z.B. "fit-iris")
+
+[^1]: Erweiterungen des klassischen data frames aus {base} R sind "tibbles" im tidyverse-Universum (siehe @sec-tidyverse) oder "data.tables" bei Benutzung vom Paket {data.table} (siehe <https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html>)
+
+![Environment mit verschiedenen geladenen Objekten; Ansicht "List"](images/Screenshot%20(61).png){#fig-environment-list}
+
+![Environment mit verschiedenen geladenen Objekten; Ansicht "Grid"](images/Screenshot%20(62).png){#fig-environment-grid}
+
+-   Befehle müssen deshalb die zu benutzenden Objekte *eindeutig identifizieren*
+    -   Objekte und ihre Elemente werden mit `$` voneinander getrennt
+    -   Z.B. weist `iris$Sepal.Width` hin auf die Variable "Sepal.Width" im Datensatz "iris", `ToothGrowth$len` auf Variable "len" im Datensatz "ToothGrowth" etc.
 -   Daten können auch angeschaut werden, entweder mit `View()` oder durch klicken auf das Objekt im Fenster "Environment"
--   In einer Analyse können Daten aus verschiedenen Datensätzen kombiniert werden, z.B. `(mean(iris$Sepal.Width)) + (median(ToothGrowth$len))`
+-   In einer Analyse können Variablen aus verschiedenen Datensätzen kombiniert werden, z.B. `(mean(iris$Sepal.Width)) + (median(ToothGrowth$len))`
 
-# Arbeiten in R
+## Importieren von Daten
 
+-   Für uns sind am ehesten "klassische" Datensätze relevant - Spalten sind Variablen und Zeilen sind Beobachtungen / Fälle
+-   Je nach Dateiformat sind zum Import Pakete notwendig (oder zumindest hilfreich)
+-   Manuell / quick and dirty: Unten rechts den entsprechenden Ablageordner suchen -\> Klicken -\> "Import dataset"
+
+![Datenimport eines CSV via Menu](images/image-874524877.png){#fig-datenimport-menu}
+
+-   Oder - besser (Reproduzierbarkeit!) - via Code (ggf. aus dem Importmenu kopieren): Unterschiedlich je nach Datenformat
+-   Viele Daten lassen sich mit bestehenden (base R) Funktionen laden, z.B. `read.csv()` für CSV oder `read.table()` für Tabellen (Excel)
+-   Es gibt neben den bestehenden Funktionen auch andere, wie {readr} [@readr] für Textdokumente oder {readxl} [@readxl] für Excel-Tabellen, welche das gleiche Ziel haben (Datenimport), aber ggf. andere Einstellungsmöglichkeiten haben oder Daten automatisiert erkennen
+-   Spezielle Formate brauchen ggf. spezielle Pakete, wie {haven} [@haven] für den Import von SPSS- oder STATA-Daten
+    -   **Achtung**: R geht mit Labels ganz anders um, können ggf. nicht importiert werden (siehe @sec-kategoriale-variablen)!
+-   Es gibt auch einige R-spezifische Datenformate:
+    -   Bereits in R bestehenden Daten: `data("name")`; ohne Zuweisung an Objekt
+    -   Ein einzelnes Objekt ".rds": `readRDS("name.rds")`; braucht Zuweisung an Objekt
+    -   Mehrere Objekte möglich: ".rda" oder ".Rdata": `load("name.rda")`; ohne Zuweisung an Objekt, bei diesen ist der Objektname bereits hinterlegt
+
+```{r, echo = TRUE}
+# csv
+Churn <- readr::read_table(here("Daten", "Churn.csv"))
+
+# txt
+Arrivals <- readr::read_table(here("Daten", "Arrivals.txt"))
+
+# Excel
+alpenquer <- readxl::read_excel(here("Daten", "Alpenquerender_Gueterverkehr_Schiene.xls"))
+
+# rda (eigenes R-Format)
+load(here("Daten", "Treibstoffpreise_CH.rda"))
+
+# Import von SPSS
+car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
+
+# Laden von in R bestehenden Daten
+# Müssen keinem Objekt mehr zugewiesen werden!
+data("iris")
+data("USArrests")
+data("AirPassengers") # Spezialfall Zeitreihe
+```
+
+-   Man beachte, dass in den Daten "USArrests" die Fälle benannt / beschriftet sind (`View(USArrests)`), ohne dass die Information in einer Variable gespeichert ist. In "iris" sind die Daten einfach nummeriert.
+
+## Variablentypen / -klassen {#sec-variablentypen}
+
+-   R speichert Werte / Inhalte von Variablen in den folgenden Typen ("classes")
+    -   "*num*": Numerisch (Zahlen, Standard, alle reellen Zahlen)
+    -   "*int*": Numerisch (Zahlen; integer, nur ganzzahlige Werte)
+    -   "*chr*": character (Buchstaben, String in SPSS)
+    -   "*logi*": logical (TRUE / FALSE)
+    -   "*POSIXct* oder *POSIXt*": Datumsformat von R
+    -   "*ts*": Zeitreihe (time series, eigenes spezifisches Format in R)
+-   Datentyp (je nachdem) abfragen mit `class(),` `str()` oder `summary()` oder oben rechts in "Environment" anschauen...
+
+# Erste Arbeiten in R
+
+-   Funktionen werden immer mit einer Klammer am Ende geschrieben, ohne schliessende Klammer geht nichts...
+-   Innerhalb von Klammern können weitere Funktionen geschrieben werden (s. unten)
 -   Code ausführen:
-    -   Code markieren oder ganze Zeile auswählen
+    -   Code markieren, ganze Zeile auswählen oder einfach in den Code klicken
     -   Ausführen entweder mit *Ctrl + Enter*
     -   Oder in Konsole individuell mit *Enter*
-    -   Oder oben rechts auf "Run"
+    -   Oder oben rechts im Skript auf "Run"
+    -   Letzte Befehle aus der Konsole scrollen mit *Shift + Pfeil nach oben* oder im Fenster oben rechts auf "History"
 -   Tipp: Teil eines längeren Codes markieren und mit *Ctrl + Enter* ausführen, bspw. ergibt `round(sqrt(122))` 11, ich kann aber auch nur `sqrt(122)` markieren und mit *Ctrl + Enter* ausführen, dann erhalte ich die ungerundete Zahl
+
+## Mathematische Operatoren und logische Operatoren {#sec-log-operatoren}
+
+-   Die mathematischen Operatoren können normal benutzt werden, wie man sie kennt [@navarro, S. 46]
+
+| Anwendung      | Operator | Beispieleingabe | Beispielausgabe |
+|----------------|----------|-----------------|-----------------|
+| Addition       | `+`      | `10 + 2`        | `12`            |
+| Subtraktion    | `-`      | `9 - 3`         | `6`             |
+| Multiplikation | `*`      | `5 * 5`         | `25`            |
+| Division       | `/`      | `9 / 3`         | `3`             |
+| Potenz         | `^`      | `5 ^ 2`         | `25`            |
+
+: Mathematische Operatoren {#tbl-mathematische-operatoren}
+
+-   Die logischen Operatoren sind nicht immer gleich wie in SPSS [@navarro, S. 63-64]!
+    -   (Eingabe des "Oder" (`|`) mit *Ctrl + Alt + 7*)
+
+| Anwendung      | Operator | Beispieleingabe   | Antwort |
+|----------------|----------|-------------------|---------|
+| Kleiner als    | `<`      | `2 < 3`           | `TRUE`  |
+| Kleiner gleich | `<=`     | `2 <= 2`          | `TRUE`  |
+| Grösser als    | `>`      | `2 > 3`           | `FALSE` |
+| Grösser gleich | `>=`     | `2 <= 2`          | `TRUE`  |
+| Gleich         | `==`     | `2 == 3`          | `FALSE` |
+| Ungleich       | `!=`     | `2 != 3`          | `TRUE`  |
+| (Ist) Nicht    | `!`      | `!(1==1)`         | `FALSE` |
+| Oder           | `|`      | `(1==1) | (2==3)` | `TRUE`  |
+| Und            | `&`      | `(1==1) & (2==3)` | `FALSE` |
+
+: Logische Operatoren {#tbl-logische-operatoren}
 
 ## Einfache Eingabe und Zuweisung an *Objekte* {#sec-objekte}
 
@@ -232,9 +298,12 @@ download_dir(
 1 + 2
 ```
 
--   Zuweisung des Werts an Objekt "x" mit Pfeil
+-   Zuweisung an ein Objekt mit Pfeil `<-`, egal ob ein direkter Wert oder das Resultat einer Berechnung
 
 ```{r, echo = TRUE}
+a <- 9
+a
+
 x <- 1 + 2
 x
 ```
@@ -245,26 +314,47 @@ x
 x + 4
 ```
 
--   Eingabe mehrere Werte als Vektor, hier z.B. die Werte 4 und -4
+-   Es kann auch Text an ein Objekt zugewiesen werden
+
+```{r}
+farbe <- "rosa"
+farbe
+```
+
+-   Zahlen können an beliebige Objekte zugewiesen werden, um mit ihnen zu rechnen. Hier werden zwei Zahlen unter `Erste_Zahl` und `Zweite_Zahl` gespeichert
+
+```{r}
+Erste_Zahl <- 4
+Zweite_Zahl <- 5
+
+Erste_Zahl * Zweite_Zahl
+```
+
+-   Objekte können **nicht** als Zahlen benannt werden!
+
+```{r}
+# 1 <- 2
+# Error in 1 <- 2 : invalid (do_set) left-hand side to assignment
+```
+
+## Komplizierteres
+
+-   Eingabe mehrerer Werte als *Vektor*, hier z.B. die Werte 4 und -4
 
 ```{r, echo = TRUE}
 y <- c(4, -4)
 y
 ```
 
--   Komplizierteres
-
 ```{r, echo = TRUE}
-# x (3) plus 4 und minus 4, ergibt zwei Werte
+# x (3 von oben) plus 4 und minus 4, ergibt zwei Werte
 x + c(4,-4)
 
 # Gleiches Resultat, weil y vorher als 4 / -4 definiert
 x + y
 ```
 
-## Datenformate
-
--   R kann Informationen in verschiedenen Formaten speichern
+-   Sequenzen als Vektoren
 
 ```{r, echo = TRUE}
 # Vektor mit Zahlen von 1 bis 12
@@ -272,7 +362,44 @@ d = seq(from = 1, to = 12)
 d
 View(d) # Anzeigen von "d"
 str(d) # Struktur von "d"
+class(d)
+```
 
+-   Mehr Arbeit mit Vektoren
+
+```{r}
+# Für jeden Monat (12 Zahlen) einen Wert definieren
+rate_pro_monat <- c(0, 100, 200, 50, 0, 0, 0, 0, 100, 0, 0, 0)
+rate_pro_monat
+
+# Wert für den zweiten Monat erhalten und getrennt abspeichern
+rate_februar <- rate_pro_monat[2]
+rate_februar
+
+# Wert für den fünften Monat ergänzen
+rate_pro_monat[5] <- 150
+rate_pro_monat
+
+# Länge des Vektors herausfinden
+length(rate_pro_monat)
+
+# Werte für die Monate Februar-April extrahieren
+rate_pro_monat[c(2,3,4)]
+
+# Oder
+rate_pro_monat[2:4]
+```
+
+-   Vektoren von logischen Werten ("true" oder "false")
+
+```{r}
+# Ist jeder Wert von "rate_pro_monat" grösser Null?
+rate_pro_monat > 0
+```
+
+-   Matrizen
+
+```{r}
 # Vektor d in Matrix "m" mit 3 Reihen umwandeln (ergibt Matrix 3 x 4)
 m = matrix(data = d, 
            nrow = 3) 
@@ -293,61 +420,93 @@ View(n) # Anzeigen von "n"
 str(n) # Struktur von "n"
 ```
 
+-   Soll ein *bestehendes Objekt geändert* werden, muss die Änderung immer diesem zugewiesen werden: `bestehendes_objekt <- aenderung(bestehendes_objekt)`
+-   Soll ein *neues Objekt erstellt* werden, muss dieses ebenfalls definiert werden: `neues_objekt <- aenderung(bestehendes_objekt)`
+-   Je nach Arbeitsablauf macht es Sinn, das bestehende Objekt zu überschreiben oder ein neues zu erstellen...
+
+```{r}
+# Erstellt aus der Matrize "n" ein neues Objekt "n_df" als data frame
+n_df <- as.data.frame(n)
+
+# Mit "View" sind keine Unterschiede ersichtlich
+View(n)
+View(n_df)
+
+# Bei der Ausgabe der Objekte sieht man einige Unterschiede
+n
+n_df
+
+# Offensichtlich wird der Unterschied, wenn man die Struktur der  
+# beiden Objekte abgefragt
+str(n)
+# n ist immer noch eine Reihe von integers
+str(n_df)
+# n_df ist ein data frame mit Beobachtungen und Variablen
+
+# Überprüfen, ob n und n_df identisch sind
+setequal(n, n_df)
+
+# Überschreibt das bestehende Objekt "n" als data frame
+n <- as.data.frame(n)
+
+# Nochmals berprüfen, ob n und n_df identisch sind
+setequal(n, n_df)
+```
+
+-   Benennung von Werten mit `names()`
+
+```{r}
+# Ich habe eine Rate pro Quartal
+rate_pro_quartal <- c(3.1, 0.1, 5.4, 1.1)
+rate_pro_quartal
+
+# Das ist aber nicht so übersichtlich.
+# Ich gebe deshalb jedem Wert einen "Namen"
+names(rate_pro_quartal) <- c("Q1","Q2","Q3","Q4")
+rate_pro_quartal
+
+# Alternative in einem Schritt
+rate_pro_quartal_2 <- c("Q1" = 3.1, "Q2" = 0.1, "Q3" = 5.4, "Q4" = 1.1)
+
+# Überprüfen, ob die Objekte identisch sind
+rate_pro_quartal == rate_pro_quartal_2
+```
+
 ## Auswahl von Elementen in einer Tabelle
 
--   Mit base R: `Objekt[Zeile, Spalte]` -\> z.B. `m[1,3]` ergibt Inhalt der ersten Zeile, dritte Spalte
--   Einzelne Zeile/Beobachtung auswählen: `m[2,]` -\> zweite Zeile/Beobachtung, keine Spalte ausgewählt
--   Einzelne Spalte/Variable auswählen: `m[, 3]` -\> dritte Spalte/Variable, keine Zeile/Beobachtung ausgewählt
--   Einzelen Spalte/Variable auswählen mit Variablenname: `m[, "Var1"]` -> Spalte mit Namen "Var1", keine Zeile/Beobachtung ausgewählt
--   Alternative für Spalten/Variablen, wenn das Objekt ein data frame ist: `df$Var1` -\> Spalte/Variable genannt "Var1" ausgewählt
+-   Mit base R: `Objekt[Zeile, Spalte]` -\> z.B. `m[1,3]` ergibt Inhalt der ersten Zeile, dritte Spalte (siehe @tbl-elemente)
+    -   Einzelne Zeile/Beobachtung auswählen: `m[2,]` -\> zweite Zeile/Beobachtung, keine Spalte ausgewählt
+    -   Einzelne Spalte/Variable auswählen: `m[, 3]` -\> dritte Spalte/Variable, keine Zeile/Beobachtung ausgewählt
+
+| Reihe | Spalte 1 | Spalte 2 | Spalte 3 |
+|-------|----------|----------|----------|
+| 1     | `[1,1]`  | `[1,2]`  | `[1,3]`  |
+| 2     | `[2,1]`  | `[2,2]`  | `[2,3]`  |
+| 3     | `[3,1]`  | `[3,2]`  | `[3,3]`  |
+| 4     | `[4,1]`  | `[4,2]`  | `[4,3]`  |
+| 5     | `[5,1]`  | `[5,2]`  | `[5,3]`  |
+
+: Zugriff auf Elemente nach Reihe und Spalte {#tbl-elemente}
+
+-   Einzelen Spalte/Variable auswählen mit Variablenname, *wenn sie einen Namen hat*: `m[, "Var1"]` -\> Spalte mit Namen "Var1", keine Zeile/Beobachtung ausgewählt
+-   Das ist bei grösseren Datensätzen aber eher umständlich. Eine bessere Alternative für Spalten/Variablen, wenn das Objekt ein *data frame* ist (dann sind die Spalten als Variablen benannt): `df$Var1` -\> Spalte/Variable genannt "Var1" wird ausgewählt
 -   Je nach benutztem Paket sind andere Schreibweisen möglich, z.B. bei Benutzung von Paketen aus dem "Tidyverse" (siehe @sec-tidyverse)
 
 ```{r}
+# Beispiel mit den "iris"-Daten
 data(iris)
 
+# Auswahl des ersten Wertes der ersten Spalte ("Sepal.Length")
 # Diese drei Befehle sind identisch!
 
-mean(iris[, 1]) # 1. Spalte
-mean(iris[,"Sepal.Length"]) # Spalte mit Name "Sepal.Length"
-mean(iris$Sepal.Length) # Spalte mit Name "Sepal.Length"
+iris[1, 1]
+iris[1,"Sepal.Length"] # Spalte mit Name "Sepal.Length"
+iris$Sepal.Length[1] # Spalte mit Name "Sepal.Length"
 ```
 
--   Analog kann auch auf Elemente von anderen Objekte zugegriffen werden, z.B. auf Elemente eines Outputs einer Operation, die als Listen gespeichert werden:
+-   Analog kann mit dem `$` auch auf Elemente von anderen Objekte zugegriffen werden, z.B. auf Elemente eines Outputs einer Operation, die als Listen gespeichert werden:
     -   `fit_iris$coefficients` wird alle Elemente aus dem "Unterelement" `coefficients` des Objekts `fit_iris` (bspw. ein Resultat einer linearen Regression) wiedergeben.
     -   Um die Namen von Elementen von Objekten zu sehen: `names(objekt)`. (Je nach Art des Objektes zeigt es anderes an, bei data frames z.b. einfach die Variablennamen, bei Listen die versch. Elemente etc.)
-
-## Importieren von Daten
-
--   Für uns sind am ehesten "klassische" Datensätze relevant - Spalten sind Variablen - Zeilen sind Beobachtungen / Fälle
--   Je nach Dateiformat sind zum Import Pakete notwendig (oder zumindest hilfreich)
--   Manuell / quick and dirty: Unten rechts den entsprechenden Ablageordner suchen -\> Klicken -\> "Import dataset"
-
-![Datenimport eines CSV via Menu](images/image-874524877.png){#fig-datenimport-menu}
-
--   Oder - besser (Reproduzierbarkeit!) - via Code: Unterschiedlich je nach Datenformat.
-
-```{r, echo = TRUE}
-# csv
-Churn <- readr::read_table(here("Daten", "Churn.csv"))
-
-# txt
-Arrivals <- readr::read_table(here("Daten", "Arrivals.txt"))
-
-# Excel
-alpenquer <- readxl::read_excel(here("Daten", "Alpenquerender_Gueterverkehr_Schiene.xls"))
-
-# rda (eigenes R-Format)
-load(here("Daten", "Treibstoffpreise_CH.rda"))
-# Daten müssen hier keinem Objekt mehr zugewiesen werden!
-```
-
--   Import von SPSS- oder STATA-Daten mit dem Paket `haven`
-    -   **Achtung**: R geht mit Labels ganz anders um, können ggf. nicht importiert werden!
-
-```{r}
-# Import von SPSS
-car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
-```
 
 ## Dimensionen und Eigenschaften von Matrizen und data frames
 
@@ -372,13 +531,134 @@ tail(iris) # Zeigt letzte 6 Beobachtungen
 summary(iris)
 ```
 
+## Fehlende Werte
+
+-   `NA` = fehlende Werte
+-   `NaN` = "not a number" (bspw. bei Rechnung `0 / 0`)
+-   Anzahl `NA` anzeigen für alle Spalten / Variablen: `colSums(is.na())`
+-   Anzahl `NA` anzeigen für eine einzelne Spalte: `sum(is.na(df$var))`
+-   Logische Überprüfung, ob ein Fall `NA` ist: `is.na()`
+-   Fälle mit fehlenden Werten entfernen: `df <- na.omit(df)` (Zuweisung an Objekt nicht vergessen!)
+-   Im Gegensatz zu SPSS können in R nicht verschiedene numerische Werte als "missing" codiert werden
+
+```{r}
+# Funktioniert nicht, wegen NAs:
+mean(car_sales$price)
+
+# Die NAs müssen aktiv ausgeklammert werden von der Analyse:
+mean(car_sales$price, na.rm = TRUE)
+```
+
+## Kategoriale / nominale Variablen & labels {#sec-kategoriale-variablen}
+
+-   Auch in R werden kategoriale Variablen als Nummer (integers) gespeichert mit einem zugewiesenen "level"
+-   R zeigt aber normalerweise nur die "levels" an, nicht die dahinterliegenden integers
+-   Labels für numerisch codierte kategoriale Variablen sind in R eher untypisch
+-   Häufiger sind die Variablen direkt codiert, als "männlich" oder "weiblich" anstatt "0 = männlich" und "1 = weiblich", d.h. die Variablen werden als Faktorvariablen gespeichert
+-   Alternative zu base R: Paket {expss} [@expss]
+    -   <https://cran.r-project.org/web/packages/expss/expss.pdf>
+    -   Ermöglicht zudem auch SPSS-ähnliche Kreuztabellen, was in R auch eher mühsam ist (siehe @sec-kreuztabellen)
+
+# Recodierungen und Berechnung neuer Variablen {#sec-recodierung}
+
+## Recodierung von numerischen Variablen
+
+-   Mit base R: Einfach mit dem "Zuweisungs-Pfeil" (siehe @sec-objekte ) `<-` der Variable neue Werte zuweisen
+
+```{r}
+# Bestehende Variable "Petal.Length" logarithmieren
+iris$Petal.Length <- log(iris$Petal.Length)
+
+# Neue Variable "sepal_total" erstellen aus Summe
+# von Sepal.Length + Sepal.Width
+iris$sepal_total <- iris$Sepal.Length + iris$Sepal.Width
+```
+
+-   Mit dem Paket {dplyr} aus dem tidyverse (siehe @sec-tidyverse)
+
+```{r}
+library(dplyr)
+# Bestehende Variable "Petal.Length" logarithmieren
+iris <- iris |> 
+  mutate(PetalLength = log(iris$Petal.Length))
+
+# Neue Variable "petal_total" erstellen aus Summe
+# von Petal.Length + Petal.Width
+iris <- iris |> 
+  mutate(petal_total = Petal.Length + Petal.Width)
+```
+
+## Recodierung von kategoriellen Faktorvariablen
+
+Mit dem Paket {dplyr} aus dem tidyverse (siehe @sec-tidyverse), weil hier die Vorteile von {dplyr} gegenüber base R definitiv zum Zug kommen!
+
+```{r}
+# Ich möchte eine neue Variable "manufact_herkunft" erstellen
+# basierend auf der Marke "manufact"
+car_sales <- car_sales |> 
+  dplyr::mutate(manufact_herkunft = dplyr::case_when(manufact == "Acura"         ~ "USA",
+                                                     manufact == "Audi"          ~ "Deutschland",
+                                                     manufact == "BMW"           ~ "Deutschland",
+                                                     manufact == "Buick"         ~ "USA",
+                                                     manufact == "Cadillac"      ~ "USA",
+                                                     manufact == "Chevrolet"     ~ "USA",
+                                                     manufact == "Chrysler"      ~ "USA",
+                                                     manufact == "Dodge"         ~ "USA",
+                                                     manufact == "Ford"          ~ "USA",
+                                                     manufact == "Honda"         ~ "Asien",
+                                                     manufact == "Hyundai"       ~ "Asien",
+                                                     manufact == "Infiniti"      ~ "USA",
+                                                     manufact == "Jaguar"        ~ "England",
+                                                     manufact == "Jeep"          ~ "USA",
+                                                     manufact == "Lexus"         ~ "Asien",
+                                                     manufact == "Lincoln"       ~ "USA",
+                                                     manufact == "Mercedes-Benz" ~ "Deutschland",
+                                                     manufact == "Mercury"       ~ "USA",
+                                                     manufact == "Mitsubishi"    ~ "Asien",
+                                                     manufact == "Nissan"        ~ "Asien",
+                                                     manufact == "Oldsmobile"    ~ "USA",
+                                                     manufact == "Plymouth"      ~ "USA",
+                                                     manufact == "Pontiac"       ~ "USA",
+                                                     manufact == "Porsche"       ~ "Deutschland",
+                                                     manufact == "Saab"          ~ "Schweden",
+                                                     manufact == "Saturn"        ~ "USA",
+                                                     manufact == "Subaru"        ~ "Asien",
+                                                     manufact == "Toyota"        ~ "Asien",
+                                                     manufact == "Volkswagen"    ~ "Deutschland",
+                                                     manufact == "Volvo"         ~ "Schweden")
+         )
+
+```
+
+## Neue Variablen anhand mehrerer Bedingungen definieren
+
+-   Mit `dplyr::case_when()` lassen sich auch mehrere Bedingungen kombinieren, hier mit numerischen Variablen, nicht mit Textvariabeln wie oben.
+
+```{r}
+# Ich möchte eine neue Variable erstellen für die Kombination
+# aus Hubraum (engine_s) und Gewicht (curb_wgt)
+car_sales <- car_sales |> 
+  dplyr::mutate(hubraum_gewicht = dplyr::case_when((engine_s < 3) & (curb_wgt < 3.5) ~ "Klein & leicht",
+                                                   (engine_s >= 3) & (curb_wgt < 3.5) ~ "Gross & leicht",
+                                                   (engine_s < 3) & (curb_wgt >= 3.5) ~ "Klein & schwer",
+                                                   (engine_s >= 3) & (curb_wgt >= 3.5) ~ "Gross und schwer"
+                                                   ))
+```
+
 # Analysen
 
-## Einfache deskriptive Statistiken
+## Erste deskriptive Statistiken
 
 ```{r, echo = TRUE}
 # Mittelwert von Sepal.Length in iris
+# Meine Empfehlung
 mean(iris$Sepal.Length)
+
+# Geht auch
+mean(iris[, 1])
+
+# Geht auch
+mean(iris[, "Sepal.Length"])
 
 # Mittelwert als Objekt abspeichern
 sepal_length_mean <- mean(iris$Sepal.Length)
@@ -395,11 +675,25 @@ summary(iris$Sepal.Length)
 -   Alternative z.B. mit dem Paket {vtable}
 
 ```{r, echo = TRUE}
-# Zusammenfassung der Variablen (inkl. Klasse)
+#| label: tbl-iris-vtable
+#| tbl-cap: Zusammenfassung der Variablen von "iris" (inkl. Klasse)
+
 vtable:::vtable(iris)
+```
+
+```{r}
+#| label: tbl-iris-sumtable
+#| tbl-cap: Zusammenfassende Statistik von "iris"
+
 
 # Summary statistics
 vtable:::sumtable(iris)
+```
+
+```{r}
+#| label: tbl-iris-sumtable-species
+#| tbl-cap: Zusammenfassende Statistik von "iris", getrennt nach "Species"
+
 
 # Summary statistics, getrennt nach "Species"
 vtable:::sumtable(iris,
@@ -407,32 +701,99 @@ vtable:::sumtable(iris,
                   group.test = TRUE) # Zeigt statistische Signifikanztests zwischen den Gruppen
 ```
 
-## Einfache Häufigkeiten
+## Einfache Häufigkeitstabellen
 
--   Einfache Häufigkeitstabellen sind in R nicht gleich einfach wie in SPSS (siehe @sec-schwaechen)
+-   Einfache Häufigkeitstabellen sind in R nicht gleich einfach wie in SPSS. Mit base R gibt es z.B. keine Prozente, nur absolute Zahlen.
 
 ```{r, echo = TRUE}
 # Mit Basisfunktion "table"
 table(iris$Species)
 ```
 
--   Alternative mit Paket {janitor}
+-   Alternative mit `dplyr::count()` (allgemeine Funktion) oder mit `forcats::fct_count()` (spezifische Funktion für Faktorvariablen):
+-   `dplyr::count(iris$Species)` gibt aber einen Fehler, die Funktion muss hinter dem `|>` kommen!
 
 ```{r}
-janitor::tabyl(iris$Species)
-
-# Alternative Schreibweise mit tidyverse-Stil
 iris |> 
-  janitor::tabyl(Species)
+  dplyr::count(Species)
+
+forcats::fct_count(iris$Species, 
+                   prop = TRUE) # Gibt Verhältnisse an
 ```
 
-## Kreuztabellen
+-   Alternative mit `janitor::tabyl()`, ergibt gleichen Output wie oben, lediglich mit leicht anderer Beschriftung.
+
+```{r, warning = FALSE}
+janitor::tabyl(iris$Species)
+
+# Alternative, andere Schreibweise, etwas eleganterer Output
+iris |> 
+  janitor::tabyl(Species)
+
+# Oder mit formatierten Prozentzahlen
+iris |> 
+  tabyl(Species) |> 
+  adorn_pct_formatting(digits = 2)
+```
+
+-   Oder mit `expss::fre()` im Stil von SPSS
+
+```{r}
+expss::fre(iris$Species)
+```
+
+## Kreuztabellen {#sec-kreuztabellen}
+
+-   Einfache Kreuztabellen werden ebenfalls mit der `table()`-Funktion geschrieben (allerdings ohne Randprozente)
 
 ```{r}
 # Daten laden
-data("ToothGrowth") # Load training data "Toothgrowth" (from guinea pigs)
+data("ToothGrowth")
 
 table(ToothGrowth$supp, ToothGrowth$dose)
+```
+
+-   Etwas besser mit der base R-Funktion `xtabs()`, allerdings mit etwas umständlicherem Code
+
+```{r}
+xtabs(formula = ~ supp + dose, data = ToothGrowth)
+```
+
+-   Oder alternativ ebenfalls mit `janitor::tabyl()` (gleiche Funktion wie bei einer Variable, einfach zweite Variable dazugeschrieben)
+
+```{r}
+# Alternative Schreibweise mit tidyverse-Stil
+ToothGrowth |> 
+  janitor::tabyl(supp, dose)
+
+# Oder eben dann mit allem, was man will
+ToothGrowth %>%
+  tabyl(supp, dose) %>%
+  adorn_totals("col") %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns() %>%
+  adorn_title()
+```
+
+-   Oder wieder alternativ mit dem Paket {expss} im Stil von SPSS (Achtung, hier mit verschiedenen Funktionen)
+
+```{r}
+# Mit absoluten Zahlen
+expss::cro(ToothGrowth$supp, list(total(), ToothGrowth$dose), 
+           total_statistic = "u_cases")
+
+# Mit Prozenten in Zeile
+expss::cro_rpct(ToothGrowth$supp, list(total(), ToothGrowth$dose), 
+                total_statistic = "u_cases")
+
+# Mit Prozenten in Spalte
+expss::cro_cpct(ToothGrowth$supp, list(total(), ToothGrowth$dose), 
+                total_statistic = "u_cases")
+
+# Mit Prozenten für Total
+expss::cro_tpct(ToothGrowth$supp, list(total(), ToothGrowth$dose), 
+                total_statistic = "u_cases")
 ```
 
 # Abbildungen
@@ -440,6 +801,8 @@ table(ToothGrowth$supp, ToothGrowth$dose)
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
 -   Mehr Individualisierung mit Paket {ggplot2} (@sec-ggplot)
 -   vorschlag von bibs: Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
+-   Ausgabe der Abbildungen unten rechts im Fenster "Plots" (evtl. wechseln von "Files")
+    -   Abbildung vergrössern in neuem Fenster mit Klick auf "Zoom"
 -   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species)
 -   Möglichkeit, die Abbildungen gleich zu exportieren und in einem Ordner zu speichern (für Benutzung in einer anderen Anwendung)
     -   Manuell (@fig-plot-export-manual)
@@ -447,15 +810,29 @@ table(ToothGrowth$supp, ToothGrowth$dose)
 
 ![Manuelles Speichern / Exportieren von Abbildungen](images/Screenshot%20(43).png){#fig-plot-export-manual}
 
+## Säulen- / Balkendiagramm
+
+-   Am einfachsten mit `plot()` (siehe auch @sec-abb-plot). Alternativ die Funktion `barplot()`, welche aber speziell ist, weil zuerst eine Häufigkeitstabelle gebildet werden muss (`barplot(table())`).
+
+```{r}
+#| label: fig-iris-barplot-species
+#| fig-cap: "Säulendiagramm Species"
+
+plot(iris$Species)
+
+#Alternative
+# barplot(table(iris$Species))
+```
+
 ## Histogramm
 
 -   Dazu weitere Beschriftungen mit `xlab` (Label der X-Achse), `ylab` und `main`.
+-   Für mehr Übersichtlichkeit Code umbrechen!
 -   Weitere Elemente lassen sich ergänzen (`abline(h, ...)` erstellt eine horizontale Linie)
 
 ```{r, echo = TRUE}
 #| label: fig-iris-hist-sepallength
 #| fig-cap: "Histogramm Sepal Length mit Mittelwert (rot)"
-
 
 hist(iris$Sepal.Length,
      xlab = "Länge in cm",
@@ -464,13 +841,14 @@ hist(iris$Sepal.Length,
 
 # Horizontale Linie einfügen
 abline(h = mean(iris$Sepal.Length), # Höhe der Linie = Mittelwert 
-       col="red", # Farbe der Linie
-       lwd = 2) # Dicke des Striches
+       col = "red", # Farbe der Linie
+       lwd = 1) # Dicke des Striches
 ```
+
+-   **Achtung**: Weil die Funktion `abline()` getrennt von der Abbildung erstellt wird, wird sie einfach immer bei der letzten Grafik eingefügt. Wenn ich zwischen dem Histogramm und der Linie eine andere Abbildung erstellt habe, wird sie einfach dort eingefügt!
 
 ## Boxplot
 
--   Für mehr Übersichtlichkeit Code umbrechen!
 -   Zwei Variablen mit Tilde (\~) trennen
 
 ```{r, echo = TRUE}
@@ -499,7 +877,7 @@ boxplot(Sepal.Length ~ Species,
 
 -   Metrische Variablen gegeneinander
 -   Dritte Variable ("Species") als Farbe
--   Keine Legende standardmässig, muss manuell erstellt werden und ist nicht sehr intuitiv (weil zwei getrennte Objekte erstellt werden ("plot" und "legend"), müssen die Farben aufeinander abgestimmt werden!)
+-   Keine Legende standardmässig, muss manuell erstellt werden und ist nicht sehr intuitiv (weil zwei getrennte Objekte erstellt werden ("plot" und "legend"), müssen die Farben manuell aufeinander abgestimmt werden!)
 
 ```{r}
 #| label: fig-iris-scatter-sepal-petal
@@ -517,8 +895,8 @@ legend("bottomright", # legende ist unten rechts
        lty = 1, # definiert die Linienart der Legende
        col = c("black", "red", "lightgreen"),
        legend = c("setosa", 
-               "versicolor",
-               "virginica"))
+                  "versicolor",
+                  "virginica"))
 ```
 
 -   Reihenfolge und Farbe der Legende muss manuell mit den Kategorien und Farben in der Abbildung abgestimmt werden!
@@ -543,21 +921,9 @@ pairs(iris)
 #| label: fig-iris-pairs-numerical
 #| fig-cap: "Pairs-plot der numerischen Variablen in iris"
 
-
 # Befehl eingeschränkt auf Spalten 1:4 von iris 
 # (und alle Zeilen, keine Eingabe vor Komma)
 pairs(iris[,1:4])
-```
-
-## Säulendiagramme
-
--   Speziell, weil für die `barplot()`-Funktion zuerst eine Häufigkeitstabelle gebildet werden muss (einfacher mit `plot()`, siehe @sec-abb-plot)
-
-```{r}
-#| label: fig-iris-barplot-species
-#| fig-cap: "Säulendiagramm Species"
-
-barplot(table(iris$Species))
 ```
 
 ## Standard-Plot (inkl. Streudiagramm) {#sec-abb-plot}
@@ -588,101 +954,264 @@ plot(iris$Species)
 plot(iris$Sepal.Width, iris$Sepal.Length)
 ```
 
-# Schwächen von R (zumindest im Vergleich zu SPSS) {#sec-schwaechen}
+## ggplot2 {#sec-ggplot}
 
--   Keine Labels für numerisch codierte kategoriale Variabeln (kategoriale Variablen als Faktor-Variablen speichern!)
--   Umgang mit fehlenden Werten, keine individuelle Setzung von "missing" für versch. numerische Werte möglich
--   Gewichtung von Daten?
--   Pakete können umgeschrieben werden, Code kann sich ändern
--   Einfache Häufigkeits- und Kreuztabellen mit Prozenten sind nicht gleich schnell wie in SPSS
+-   Paket zur Datenvisualisierung, Teil des "Tidyverse"-Universum (siehe unten @sec-tidyverse)
+-   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
+-   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot, @fig-iris-sepallength-histogram-ggplot-facet oder @fig-iris-sepallength-histogram-ggplot-identity
+-   Literatur hier: @wickham2016a oder hier: <https://ggplot2-book.org/index.html>
+-   Grundsätzliche Idee: Abbildung erstellen in Ebenen
+    -   Zuunterst: Daten
+    -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe)
+    -   Nächste Ebene: Als was visualisieren (Säulen, Boxplot, Punkte etc.)
+    -   Nächste Ebene: Beschriftungen
+    -   Nächste Ebene...
 
-# Weitere Objekte
+```{r, echo = TRUE}
+#| label: fig-iris-sepallength-histogram-base
+#| fig-cap: "Histogramm Sepal Length mit base R"
 
-## Resultate von Analysen
+hist(iris$Sepal.Length,
+     xlab = "Länge in cm",
+     ylab = "Häufigkeit",
+     main = "Sepal Length (mit Base R)")
+```
+
+```{r}
+#| label: fig-iris-sepallength-histogram-ggplot
+#| fig-cap: "Histogramm Sepal Length mit ggplot2"
+
+# Variante 1 mit ggplot2
+ggplot(iris) +                                     # Daten 
+    aes(x = Sepal.Length) +                        # Aesthetics 
+    geom_histogram() +                             # Art der Visualisierung 
+    labs(                                          # Labels 
+        x = "Länge in cm",                         # X-Achse
+        y = "Häufigkeit",                          # Y-Achse
+        main = "Sepal Length (mit ggplot, Var. 1)" # Titel
+    )
+```
+
+```{r}
+#| label: fig-iris-sepallength-histogram-ggplot-facet
+#| fig-cap: "Histogramm Sepal Length mit ggplot2, aufgeteilt nach Species"
+
+# Variante 2 mit ggplot2
+ggplot(iris) +
+    aes(x = Sepal.Length) +
+    geom_histogram(binwidth = 0.2) +   # Breite der bins definiert anstatt default
+    facet_wrap(~ Species) +            # Pro Ausprägung von "Species" eine Abbildung  
+    labs(
+        x = "Länge in cm",
+        y = "Häufigkeit",
+        main = "Sepal Length (mit ggplot, Var. 2)"
+    )
+```
+
+```{r}
+#| label: fig-iris-sepallength-histogram-ggplot-identity
+#| fig-cap: "Histogramm Sepal Length mit ggplot2, Species überlagernd"
+
+# Variante 3 mit ggplot2
+ggplot(iris) +
+    aes(x = Sepal.Length,                   # X-Achse
+        fill = Species) +                   # Füllung der bins
+    geom_histogram(binwidth = 0.2,          # Breite der bins definiert anstatt default
+                   alpha = 0.5,             # Durchsichtigkeit der Säulen
+                   position = "identity") + # Überlagerung der Säulen
+    theme_minimal() +                       # Weisser Hintergrund, kein Rahmen
+    labs(
+        x = "Länge in cm",
+        y = "Häufigkeit",
+        main = "Sepal Length (mit ggplot, Var. 3)"
+    )
+```
+
+-   Man kann es auch übertreiben mit den Einstellungen (@fig-iris-species-barplot)...
+
+```{r}
+#| label: fig-iris-species-barplot
+#| fig-cap: "Säulendiagramm Species mit VIELEN Individualisierungen..."
+
+
+ggplot(iris) +
+  aes(x = Species) +
+  geom_bar(fill = "pink") + # Pinke Füllung
+  stat_count(geom = "text", # Datenbeschriftung
+             colour = "yellow", # Farbe der Datenbeschriftung
+             size = 7.5,        # Grösse der Datenbeschriftung
+             angle = -45,       # Beschriftung gekippt um -45 Grad
+             aes(label = after_stat(count)), # Label ist die gezählte Anzahl
+             position = position_stack(vjust = 0.5)) + 
+  # Beschriftung ist vertikal nach unten versetzt
+  theme_dark()              # Anderes "theme"
+```
+
+## Abbildungen über das Menu erstellen mit dem {esquisse}-Paket {#sec-esquisse}
+
+-   Speziell daran: Dieses Paket wird einmal installiert (`install.packages("esquisse")`), muss aber nachher nicht mit `library()` geladen werden (s. @sec-pakete), sondern steht als "Addin" in RStudio zur Verfügung (@fig-addin-esquisse; auswählen über "'ggplot2' builder")
+
+![Zugriff auf "esquisse" über die Addins](images/Screenshot%20(50).png){#fig-addin-esquisse}
+
+-   Ablauf:
+    1.  Datensatz auswählen mit "Select a data.frame" (Daten müssen als data frame vorhanden sein!, @fig-esquisse-datenauswahl)
+    2.  Variablen ziehen, wohin man sie will: Nur eine Variable: X-Achse, mehrere Variablen: Y-Achse dazu, ggf. Grösse oder Farbe der Punkte, bei kategoriellen Variablen ist auch eine Gruppierung oder "facets" möglich (@fig-esquisse-einstellungen)
+    3.  Ggf. die Art der Abbildung ändern, wenn einem der Vorschlag nicht gefällt
+    4.  Ggf. unten noch die Einstellungen ändern zu Beschriftung, Farbe etc.
+    5.  Unten rechts auf "Code" -\> "Copy to Clipboard" und den Code kopieren (oder direkt einfügen lassen mit "Insert Code in Script", @fig-esquisse-codeexport)
+    6.  Ggf. am Code selbst noch Änderungen vornehmen
+    7.  Resultat bestaunen (@fig-usarrests-all)
+
+![Auswahl der Daten im {esquisse}-Addin](images/Screenshot%20(53).png){#fig-esquisse-datenauswahl}
+
+![Einstellungen für die Abbildung im {esquisse}-Addin](images/Screenshot%20(56).png){#fig-esquisse-einstellungen}
+
+![Code-Export aus dem {esquisse}-Addin](images/Screenshot%20(57).png){#fig-esquisse-codeexport}
+
+```{r}
+#| label: fig-usarrests-all
+#| fig-cap: "Streudiagramm von USArrests mit vier Variablen"
+
+
+ggplot(USArrests) +
+  aes(x = Murder, 
+      y = Assault, 
+      colour = Rape, 
+      size = UrbanPop) +
+  geom_point(shape = "circle") +
+  scale_color_viridis_c(option = "inferno") +
+  theme_minimal()
+```
+
+# Resultate von Analysen als Objekte
 
 -   Objekte in R müssen nicht zwingend Zahlen oder Datensätze sein. Als Objekte können auch gespeichert werden:
     -   Resultate von Analysen
     -   Zeitreihen
     -   Listen
     -   etc.
+-   Ergebnisse von Regressionen werden bspw. als "Listen" gespeichert
 
 ```{r}
 data(iris)
 
 # Einfache lineare Regression
-fit_iris <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data = iris)
+fit_iris <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, 
+               data = iris)
 
 # Zusammenfassung des Modells
 summary(fit_iris)
-
-plot(fit_iris$residuals)
-plot(fit_iris$coefficients)
 ```
 
--   Auf einzelne Objekte der Resultate kann wiederum zugegriffen werden
+-   Auf einzelne Objekte der Resultate kann wiederum zugegriffen werden mit dem `$`
 
 ```{r}
+# Elemente der Liste anschauen
+names(fit_iris)
+
+# Koeffizienten anschauen
 fit_iris$coefficients
 ```
 
-## Zeitreihen
-
--   Sieht ähnlich aus wie normaler Datensatz, ist aber für R als Zeitreihe erkennbar
+-   Einzelne Elemente der Resultate können geplottet werden, mit `plot(fit_iris)` können sechs Plots erzeugt
 
 ```{r}
-# Zeitreihe
-data("AirPassengers")
-AirPassengers
-str(AirPassengers)
+#| label: fig-lm-iris-resid-fit
+#| fig-cap: "Residuals vs. Fitted Plot von lm(iris)"
+
+plot(fit_iris, which = 1)
+```
+
+```{r}
+#| label: fig-lm-iris-normalplot
+#| fig-cap: "Normalplot von lm(iris)"
+#| 
+plot(fit_iris, which = 2)
+```
+
+```{r}
+#| label: fig-lm-iris-scale-location
+#| fig-cap: "Scale Location Plot von lm(iris)"
+
+plot(fit_iris, which = 3)
+```
+
+```{r}
+#| label: fig-lm-iris-scale-leverage-plot
+#| fig-cap: "Cook's Distance Plot von lm(iris)"
+
+plot(fit_iris, which = 4)
+```
+
+```{r}
+#| label: fig-lm-iris-scale-base-leverage-plot
+#| fig-cap: "Residuals vs. Leverage Plot von lm(iris)"
+
+plot(fit_iris, which = 5)
+```
+
+```{r}
+#| label: fig-lm-iris
+#| fig-cap: "Cooks Distance vs. Leverage Plot von lm(iris)"
+
+plot(fit_iris, which = 6)
 ```
 
 # Wo finde ich Hilfe?
 
--   bibs\@zhaw.ch
 -   Google
--   R-Hilfe: In der Konsole mit Fragezeichen den Begriff eingeben, z.B. `?median` (@fig-help-median}), `?boxplot` (@fig-help-boxplot) oder `?filter` (@fig-help-filter).
+-   R-Hilfe: In der Konsole mit Fragezeichen den Begriff eingeben, z.B. `?median` (@fig-help-median), `?boxplot` (@fig-help-boxplot) oder `?filter` (@fig-help-filter).
 
-![Hilfe zu median (Paket {stats})](images/Screenshot%20(37).png){#fig-help-median}
+![Hilfe zu median (Paket {stats})](images/Screenshot%20(64).png){#fig-help-median}
 
-![Hilfe zu boxplot (Paket {graphics})](images/Screenshot%20(36).png){#fig-help-boxplot}
+![Hilfe zu boxplot (Paket {graphics})](images/Screenshot%20(65).png){#fig-help-boxplot}
 
-![Hilfe zu filter (zwei Pakete; davon das gewünschte Auswählen)](images/Screenshot%20(38).png){#fig-help-filter}
+![Hilfe zu filter (Funktion existiert in drei Paketen; davon das gewünschte Auswählen)](images/Screenshot%20(63).png){#fig-help-filter}
 
 -   Die Tidyverse-Bibel: <https://r4ds.hadley.nz/> (siehe @sec-tidyverse)
--   <https://rstudio.github.io/r-manuals/>
+
+-   "Learning Statistics with R", ein Manuskript für Psychologiestudierende von @navarro. Gut für die basics, ohne Verweise auf das Tidyverse (alles in base R)
+
+-   Verschiedene (technische) Handbücher zu R: <https://rstudio.github.io/r-manuals/>
+
+-   {chatgpt}: Es gibt ein Paket zu ChatGPT [@chatgpt-2], welches bei Code-Fragen helfen kann
+
+    -   Mehr Infos unter <https://github.com/jcrodriguez1989/chatgpt>
+
+    -   Installieren und Laden wie alle anderen Pakete (@sec-pakete)
+
+    -   Nutzung über ein visuelles Interface oben unter "Addins" (@fig-addin-chatgpt)
+
+    -   ChatGPT kann einen Code erstellen, wenn man der AI sagt, was man braucht oder umgekehrt kann umgekehrt einen Code erklären, den man der AI eingibt
+
+    -   Man braucht einen API key (bekommt man einfach über den Zugang zu ChatGPT), welcher in RStudio hinterlegt werden muss: `Sys.setenv(OPENAI_API_KEY = "XX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")`
+
+![Addin "ChatGPT"](images/Screenshot%20(48).png){#fig-addin-chatgpt}
 
 # Weiterführendes
 
 ## R-Skript vs. Markdown / Quarto
 
--   Skripte für reine Analysen, Text muss (analog zu SPSS-Syntax) auskommentiert werden mit *\#*
+-   Skripte für reine Analysen, Text muss (analog zu SPSS-Syntax) auskommentiert werden mit `#`
 -   Skripte strukturieren mit vier Trennstrichen `----` am Ende des Titels
-
-```{r}
-1 + 1 # Code auskommentieren mit hashtag
-
-# Mittelwert der Zahlen 1, 2, 3, 4 berechnen
-mean(c(1,2,3,4))
-
-# Gleiches Resultat
-mean(1:4)
-```
-
+    -   Kapitelstruktur ein-/ausschalten im Fenster oben rechts mit "Outline"
 -   Markdown / Quarto: Primär Text-Dokumente, Code muss eingefügt werden in sogenannten "Chunks" (in Quarto sind auch Chunks für Python und andere Sprachen möglich!)
-    -   Analysen können auch inline im Text eingebaut werden, z.B. ergibt die Eingabe des Codes `"r (mean(iris$Sepal.Width)) + (median(ToothGrowth$len))"` im Text direkt das Resultat dieser Berechnung (`r (mean(iris$Sepal.Width)) + (median(ToothGrowth$len))`) im Text wieder. D.h. Berechnungen lassen dich direkt in den Text eines Berichts einbauen; wenn sich die Daten verändern, kann der Bericht automatisiert neu erstellt werden und die neu gültigen Zahlen werden automatisch angepasst im Bericht
-    -   Das gleiche gilt für im Bericht eingebaute Abbildungen, diese müssen nicht angepasst werden bei veränderten Daten
-    -   Erstellen von Publikationen direkt in RStudio (zum Beispiel dieses Dokument)
-    -   Betrieben von Posit, die auch RStudio betreiben -\> Open Source
-    -   <https://quarto.org/>
-    -   Kann auch in anderen Programmen betrieben werden (z.B. VS Code)
-    -   Output in div. Formaten möglich (Word, PDF, Folien, HTML)
-    -   Kein Copy/Paste von SPSS zu Excel zu Word!
-    -   Hat visuellen Editor (@fig-quarto-visual-editor)!
+-   Analysen können auch inline im Text eingebaut werden, z.B. ergibt die Eingabe des Codes `"r (mean(iris$Sepal.Width)) + (median(ToothGrowth$len))"` im Text direkt das Resultat dieser Berechnung (`r (mean(iris$Sepal.Width)) + (median(ToothGrowth$len))`) im Text wieder. D.h. Berechnungen lassen dich direkt in den Text eines Berichts einbauen; wenn sich die Daten verändern, kann der Bericht automatisiert neu erstellt werden und die neu gültigen Zahlen werden automatisch angepasst im Bericht
+-   Das gleiche gilt für im Bericht eingebaute Abbildungen, diese müssen nicht angepasst werden bei veränderten Daten
+-   Falls umfangreicher Code besteht, ist dieser sinnvoller in einem separaten R-Skript. Auf dieses kann verwiesen werden mit `source("skript.R")`
+-   Erstellen von Publikationen direkt in RStudio (zum Beispiel dieses Dokument)
+-   Betrieben von Posit, die auch RStudio betreiben -\> Open Source
+-   <https://quarto.org/>
+-   Kann auch in anderen Programmen betrieben werden (z.B. VS Code)
+-   Perfekte Zusammenarbeit mit Zotero!
+-   Output in div. Formaten möglich (Word, PDF, Folien, HTML)
+-   Kein Copy/Paste von SPSS zu Excel zu Word!
+-   Hat visuellen Editor (@fig-quarto-visual-editor)!
 
-![Quarto: Visueller Editor](images/Screenshot%20(41).png){#fig-quarto-visual-editor}
+![Quarto: Visueller Editor](images/Screenshot%20(67).png){#fig-quarto-visual-editor}
 
 -   Python funktioniert ähnlich, aber anders als R, siehe folgender Chunk (aber die Ausgabe in diesem Dokument scheint leicht anderer Logik zu folgen als bei einem R-Chunk)
--   Code oben ist in R, unten in Python
+-   Code unten in Python
 
 ```{python}
 # Statistikpaket für python laden
@@ -707,13 +1236,13 @@ print("Mean is:", x)
 ## Tidyverse {#sec-tidyverse}
 
 -   Meist verbreitetes Paket für Datenaufbereitung, -analyse und -visualisierung
--   Eigene Syntaxstruktur[^1], aufbauend / hintereinander verknüpft, weniger verschachtelt als base R (wo man beim lesen mehrerer Funktionen "von innen" anfangen muss):
+-   Eigene Syntaxstruktur[^2], aufbauend / hintereinander verknüpft, weniger verschachtelt als base R:
     1.  Welche Daten sollen benutzt werden?
     2.  Was soll damit gemacht werden?
     3.  Verketten mit dem "Pipe"-Operator (`|>`, früher `%>%`); bedeutet sozusagen "dann mach das..."
 -   Codebeispiel für base R und tidyverse: Im iris-Datensatz die Species "virginica" filtern und daraus eine neue Variable bilden mit der Summe aus "Sepal Length" und "Sepal Width", diese Daten neu abspeichern
 
-[^1]: Es gibt durchaus Stimmen, die sich gegenüber Tidyverse kritisch äussern mit dem Argument, es sei unnötig, mache alles komplizierter, und mit Base R sei auch alles bereits möglich, was das Tidyverse kann.
+[^2]: Es gibt durchaus Stimmen, die sich gegenüber Tidyverse kritisch äussern mit dem Argument, es sei unnötig, mache alles komplizierter, und mit Base R sei auch alles bereits möglich, was das Tidyverse kann.
 
 ```{r}
 # Ganzes Tidyverse laden
@@ -731,118 +1260,128 @@ View(virginica_base)
 
 # Mit tidyverse
 virginica_tidy <- iris |> 
-  filter(Species == "virginica") |> # 
-  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   # Berechne die Summe aus "Sepal.Length" und "Sepal.Width" und nenne die neue Variable "sepallength_width"
+  filter(Species == "virginica") |> 
+  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
   mutate(petallength_width = (Petal.Length + Petal.Width))
 
 View(virginica_tidy)
 
-# Randnotiz: Tidyverse beginnt die Zeilennummerierung wieder bei 1, mit base R bleibt die Zeilennummerierung wie im ursprünglichen Datensatz, fängt bei 101 an
+# Randnotiz: Tidyverse beginnt die Zeilennummerierung wieder bei 1, mit base R 
+# bleibt die Zeilennummerierung wie im ursprünglichen Datensatz, fängt bei 101 an
 ```
 
--   Zusammengesetzt aus verschiedenen Paketen (tidyverse = ganzes Universum), je nach Bedürfnis können auch nur einzelne Pakete geladen werden
-    -   {ggplot2} (gg = Grammar of Graphics, siehe @sec-ggplot)
+-   Das tidyverse ist das ganze "Universum", zusammengesetzt aus verschiedenen Paketen. Je nach Bedürfnis werden mit `library(tidyverse)` gleich alle Pakete oder ansonsten nur einzelne geladen.
 
-    -   {tidyr}: Daten bereinigen / Umformatieren
+    -   {ggplot2}: @ggplot2-2, Daten visualisieren
 
-    -   {dplyr}: Datenmanipulation
+    -   {tidyr}: @tidyr, Daten bereinigen / Umformatieren
 
-    -   {readr}: Daten einlesen in verschiedenen Formaten
+    -   {dplyr}: @dplyr, Datenmanipulation
 
-    -   {string}: Umgang mit string-Variablen
+    -   {readr}: @readr, Daten einlesen in verschiedenen Formaten
 
-    -   {forcats}: Umgang mit kategoriellen Variablen
+    -   {stringr}: @stringr, Umgang mit string-Variablen
+
+    -   {forcats}: @forcats, Umgang mit kategoriellen Variablen (Faktorvariablen)
 
     -   etc. ...
--   Nutzung
+
+-   Nutzung:
+
     -   `library(tidyverse)`: Lädt ganzes Universum (alle Pakete)
-    -   `library(ggplot)`: Lädt nur Paket "ggplot2"
+    -   `library(ggplot2)`: Lädt nur Paket "ggplot2"
+
 -   <https://www.tidyverse.org/>
--   Open source Lehrbuch zum Tidyverse: "[R for Data Science](https://r4ds.had.co.nz/)" von Wickham und Grolemund (Hadley Wickham ist Chief Scientist bei Posit, der Firma, die RStudio betreibt)
 
-## ggplot2 {#sec-ggplot}
+-   Open source Lehrbuch zum Tidyverse: [@wickham2016b] (Hadley Wickham ist Chief Scientist bei Posit, der Firma, die RStudio betreibt)
 
--   Paket zur Datenvisualisierung, Teil des "Tidyverse"-Universum
--   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
--   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot, @fig-iris-sepallength-histogram-ggplot-facet oder @fig-iris-sepallength-histogram-ggplot-identity
+## Arbeit mit Textvariablen (character / string)
 
-```{r, echo = TRUE}
-#| label: fig-iris-sepallength-histogram-base
-#| fig-cap: "Histogramm Sepal Length mit base R"
+-   Nochmals ein Thema für sich...
+-   Im base R gibt es diverse Funktionen dazu, aus dem Tidyverse gibt es das {stringr}-Paket [@stringr]
 
+## Loops (`while` und `for`)
 
-hist(iris$Sepal.Length,
-     xlab = "Länge in cm",
-     ylab = "Häufigkeit",
-     main = "Sepal Length (mit Base R)")
+-   Ein loop ist ein Stück Code, z.B. eine Reihe von Befehlen, die wiederholt werden, bis ein Kriterium zum Abschluss erfüllt ist
+-   Beispiele unten aus @navarro, Kap. 8.2
+-   Gängigste Arten von loops:
+    -   `while`: Solange die `while`-Bedingung erfüllt ist (mit `TRUE` im Hintergrund), läuft der Befehl weiter
+    -   `for`: Für jedes Element eines Vektors wird ein Befehl ausgeführt
+
+```{r}
+# Beispiel für einen while-loop:
+# Anfangen mit x = 0
+x <- 0
+
+while (x < 1000) { # Solange x kleiner 1000 ist
+  x <- x + 17      # wird x immer um 17 erhöht
+  }
+
+print(x)
+# Der loop hat aufgehört bei 1003 nach 59 Wiederholungen
+# (59 x 17 = 1003)
 ```
 
 ```{r}
-#| label: fig-iris-sepallength-histogram-ggplot
-#| fig-cap: "Histogramm Sepal Length mit ggplot2"
-
-library(ggplot2)
-# Variante 1 mit ggplot2
-ggplot(iris) +
-    aes(x = Sepal.Length) +
-    geom_histogram() +
-    labs(
-        x = "Länge in cm",
-        y = "Häufigkeit",
-        main = "Sepal Length (mit ggplot, Var. 1)"
-    )
+# Beispiel für einen for-loop:
+for (i in 1:3) {  # Für jedes Element des Vektors 1:3
+  print("hello")  # Gib "hello" aus
+  }
 ```
 
+## Bedingungen (`if`)
+
+-   Auch eine Bedingung für das Ausführen eines Codes, aber nur einmalig, je nachdem ob eine Bedingung erfüllt ist oder nicht (bei loops gibt es eine bestimmte Anzahl wiederholungen)
+-   Beispiele unten aus @navarro, Kap. 8.3
+
 ```{r}
-#| label: fig-iris-sepallength-histogram-ggplot-facet
-#| fig-cap: "Histogramm Sepal Length mit ggplot2, aufgeteilt nach Species"
+# Elemente festlegen
+today <- Sys.Date() # heutiges Datum bestimmen
+day <- weekdays(today) # Wochentag heute bestimmen
 
-library(ggplot2)
-
-# Variante 2 mit ggplot2
-ggplot(iris) +
-    aes(x = Sepal.Length) +
-    geom_histogram(binwidth = 0.2) +
-    facet_wrap(~ Species) +
-    labs(
-        x = "Länge in cm",
-        y = "Häufigkeit",
-        main = "Sepal Length (mit ggplot, Var. 2)"
-    )
+# Ausgabe je nach Tag
+if(day == "Monday") {
+  print("I don’t like Mondays")
+  } else {
+print("I’m a happy little automaton")
+    }
 ```
 
-```{r}
-#| label: fig-iris-sepallength-histogram-ggplot-identity
-#| fig-cap: "Histogramm Sepal Length mit ggplot2, Species überlagernd"
+## Funktionen (`function`)
 
-# Variante 3 mit ggplot2
-ggplot(iris) +
-    aes(x = Sepal.Length, 
-        fill = Species) +
-    geom_histogram(binwidth = 0.2,
-                   alpha = 0.5, # Durchsichtigkeit der Säulen
-                   position = "identity") + # Überlagerung der Säulen
-    theme_minimal() +
-    labs(
-        x = "Länge in cm",
-        y = "Häufigkeit",
-        main = "Sepal Length (mit ggplot, Var. 3)"
-    )
+-   Häufig werden bereits bestehende Funktionen aus R benutzt (z.B. `mean()`, `round()` etc.), man kann aber auch eigene Funktionen schreiben
+-   Beispiele unten aus @navarro, Kap. 8.4
+-   Funktionen werden als Objekte gespeichert in der Umgebung ("Environment")
+
+```{r}
+# Erstelle eine Funktion "vierfach"
+vierfach <- function(x) {
+  y <- x * 4        # Multipliziere die Eingabe x mit 4 und speichere es als y
+  return(y)         # Gib das Resultat y aus
+}
+
+# Ausführen der Funktion
+vierfach(10)
 ```
 
 ## Git und github {#sec-github}
 
 -   System zur Kollaboration an Code und Versionsontrolle
 -   Aus Software Center "Git" installieren
--   Ist in RStudio integriert (oben rechts "Git"), braucht kein weitere Programm
+-   Ist in RStudio integriert (oben rechts "Git"), braucht kein weiteres Programm
 -   <https://github.com> resp. eigene Version für ZHAW: <https://github.zhaw.ch/>
 -   Einführung speziell für R z.B. hier: <https://happygitwithr.com/index.html>
 -   Im Intranet der ZHAW: <https://zhaw.sharepoint.com/:b:/r/sites/osc/Freigegebene%20Dokumente/2021_10_27%20-%20Git%20why%20and%20how.pdf?csf=1&web=1&e=2EehhW> oder <https://intra.zhaw.ch/departemente/school-of-engineering/services/dienste-tools/soe-it-infrastruktur/git-umgebung/>
 
-## Shiny{#sec-shiny}
+## Shiny {#sec-shiny}
 
 -   App zur Datenvisualisierung, -simulation etc.
 -   Kann in RStudio ausgeführt werden, aber auch in Homepages eingebaut werden
--   Infos hier: <https://shiny.rstudio.com/tutorial/> und hier <https://mastering-shiny.org/>
+-   Infos hier: <https://shiny.rstudio.com/tutorial/> und hier [@wickham2021] (<https://mastering-shiny.org/>)
 -   Siehe `app.R` -\> Öffnen in RStudio -\> Oben rechts auf "Run App" klicken
 -   Z.B. auch im Einsatz beim statistischen Amt der Stadt Zürich: <https://statzuerich.shinyapps.io/kali/>
+
+# Literatur
+
+::: {#refs}
+:::
