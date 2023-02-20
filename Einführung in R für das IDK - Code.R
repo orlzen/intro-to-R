@@ -14,6 +14,7 @@ library(haven) # Import von SPSS, Stata etc.
 library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
 library(tidyverse) # Ganzes tidyberse laden
+library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
 
 ## Daten laden ----
 # csv
@@ -36,6 +37,20 @@ car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
 data("iris")
 data("USArrests")
 data("AirPassengers") # Spezialfall Zeitreihe
+
+# Einzelnen Datensatz speichern im .Rds-Format
+saveRDS(Churn, here("Datenexport", "Churn_save.Rds"))
+
+## Exportieren / Speichern von Daten ----
+
+# Mehrere geladenen Daten speichern im .Rdata-Format
+save(list = c("Churn", "Arrivals"), 
+     # Objekte "Churn" und "Arrivals" werden exportiert
+     file = here("Datenexport/Churn_Arrivals.Rdata"))
+# Beim Export in .Rdata braucht es den Zusatz "file = ..." 
+
+# Exportieren in SPSS-Format
+haven::write_sav(iris, here("Datenexport", "iris.sav"))
 
 # Erste Arbeiten in R ----
 ## Einfache Eingabe und Zuweisung an Objekte ----

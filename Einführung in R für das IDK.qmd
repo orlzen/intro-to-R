@@ -33,6 +33,7 @@ library(janitor) # Für schöne Tabellen
 library(haven) # Import von SPSS, Stata etc.
 library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
+library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
 ```
 
 ```{r setting}
@@ -52,8 +53,6 @@ knitr::opts_chunk$set(
 ```{r}
 #| echo: false
 #| warning: false
-
-# Daten laden
 
 # csv
 Churn <- readr::read_table(here("Daten", "Churn.csv"))
@@ -165,7 +164,7 @@ download_dir(
     -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
 -   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer
--   Allgemein gültige Pfade mit dem Paket {here} -\> laden am Anfang mit `library(here)`
+-   Allgemein gültige Pfade mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
     -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`"
     -   Daten einlesen mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind
 
@@ -235,6 +234,29 @@ data("AirPassengers") # Spezialfall Zeitreihe
 ```
 
 -   Man beachte, dass in den Daten "USArrests" die Fälle benannt / beschriftet sind (`View(USArrests)`), ohne dass die Information in einer Variable gespeichert ist. In "iris" sind die Daten einfach nummeriert.
+
+## Exportieren / Speichern von Daten
+
+-   Ich speichere fast nie bearbeitete Daten, sondern finde es einfacher, Rohdaten zu laden und das Skript darüber laufen zu lassen.
+-   Export möglich in .csv, .xlsx oder ggf. in SPSS- oder STATA-Format mit {haven}
+-   Export in R-Formate wie `.Rds` oder `.Rdata` / `.rda` (identisch, aber die Endung `.Rdata` wird von Windows als zu R gehörend automatisch erkannt, `.rda` nicht. Ich würde deshalb `.Rdata` empfehlen).
+-   Idealerweise auch wieder das {here}-Paket benutzen (s. oben) für saubere Pfade
+-   **Achtung**: Allfälliger Unterordner muss schon bestehen für Export darin
+-   Nb: Falls RStudio fragt, ob der Workspace gesichert werden soll: Immer "Nein" klicken, sonst lädt man beim nächsten Mal bearbeitete Daten in den Workspace und weiss nicht mehr, wie diese bearbeitet wurden.
+
+```{r}
+# Einzelnen Datensatz speichern im .Rds-Format
+saveRDS(Churn, here("Datenexport", "Churn_save.Rds"))
+
+# Mehrere geladenen Daten speichern im .Rdata-Format
+save(list = c("Churn", "Arrivals"), 
+     # Objekte "Churn" und "Arrivals" werden exportiert
+     file = here("Datenexport/Churn_Arrivals.Rdata"))
+# Beim Export in .Rdata braucht es den Zusatz "file = ..." 
+
+# Exportieren in SPSS-Format
+haven::write_sav(iris, here("Datenexport", "iris.sav"))
+```
 
 ## Variablentypen / -klassen {#sec-variablentypen}
 
@@ -1174,19 +1196,15 @@ plot(fit_iris, which = 6)
 
 -   Verschiedene (technische) Handbücher zu R: <https://rstudio.github.io/r-manuals/>
 
--   {chatgpt}: Es gibt ein Paket zu ChatGPT [@chatgpt-2], welches bei Code-Fragen helfen kann
+-   ChatGPT: Es gib mittlerweile einige Pakete zu ChatGPT, welche beim Codieren helfen sollen, indem sie Code-Vorschläge machen oder Code auf Fehler überprüfen.
 
-    -   Mehr Infos unter <https://github.com/jcrodriguez1989/chatgpt>
+    -   Aber **Achtung**: Wie häufig bei ChatGPT stimmt nicht immer alles, was die AI sagt, auch wenn es plausibel tönt! Manchmal erfindet sie auch nicht existierende Funktionen...
 
-    -   Installieren und Laden wie alle anderen Pakete (@sec-pakete)
+    -   Man braucht auf jeden Fall einen API key (bekommt man einfach über den Zugang zu ChatGPT), welcher in RStudio hinterlegt werden muss
 
-    -   Nutzung über ein visuelles Interface oben unter "Addins" (@fig-addin-chatgpt)
+    -   {chatgpt}: @chatgpt-4; <https://github.com/jcrodriguez1989/chatgpt>
 
-    -   ChatGPT kann einen Code erstellen, wenn man der AI sagt, was man braucht oder umgekehrt kann umgekehrt einen Code erklären, den man der AI eingibt
-
-    -   Man braucht einen API key (bekommt man einfach über den Zugang zu ChatGPT), welcher in RStudio hinterlegt werden muss: `Sys.setenv(OPENAI_API_KEY = "XX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")`
-
-![Addin "ChatGPT"](images/Screenshot%20(48).png){#fig-addin-chatgpt}
+    -   {gptstudio}: (noch nicht auf CRAN), <https://michelnivard.github.io/gptstudio/>
 
 # Weiterführendes
 
