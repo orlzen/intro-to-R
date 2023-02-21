@@ -13,7 +13,6 @@ library(janitor) # Für schöne Tabellen
 library(haven) # Import von SPSS, Stata etc.
 library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
-library(tidyverse) # Ganzes tidyberse laden
 library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
 
 ## Daten laden ----
@@ -215,6 +214,23 @@ mean(car_sales$price)
 
 # Die NAs müssen aktiv ausgeklammert werden von der Analyse:
 mean(car_sales$price, na.rm = TRUE)
+
+## Kategoriale / ordinale Variablen & labels ----
+
+faktorbeispieldaten <- data.frame(age = c(21, 30, 25, 41, 29, 33), # 6 Altersangaben
+                                  sex = factor(c(1, 2, 1, 2, 1, 2), # 6 Geschlechtsangaben
+                                               labels = c("Female", "Male")))
+# Labels für Geschlecht (1 = "Female", 2 = "Male", automatisch zugeteilt)
+
+# Gleiches Ergebnis, aber ohne numerische Faktorvariable
+faktorbeispieldaten_2 <- data.frame(age = c(21, 30, 25, 41, 29, 33), # 6 Altersangaben
+                                    sex = factor(c("Female", "Male", "Female", "Male", "Female", "Male"))) 
+
+## Variablenlabels ----
+
+faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
+                                           age = "Alter in Jahren",
+                                           sex = "Geschlecht")
 
 # Recodierungen und Berechnung neuer Variablen ----
 
@@ -559,14 +575,20 @@ View(virginica_base)
 
 # Mit tidyverse
 virginica_tidy <- iris |> 
-  filter(Species == "virginica") |> 
-  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
-  mutate(petallength_width = (Petal.Length + Petal.Width))
+  dplyr::filter(Species == "virginica") |> 
+  dplyr::mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
+  dplyr::mutate(petallength_width = (Petal.Length + Petal.Width))
 
 View(virginica_tidy)
 
 # Randnotiz: Tidyverse beginnt die Zeilennummerierung wieder bei 1, mit base R 
 # bleibt die Zeilennummerierung wie im ursprünglichen Datensatz, fängt bei 101 an
+
+# Mit tidylog
+virginica_tidylog <- iris |> 
+  tidylog::filter(Species == "virginica") |> 
+  tidylog::mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
+  tidylog::mutate(petallength_width = (Petal.Length + Petal.Width))
 
 ## Loops (while und for) ----
 

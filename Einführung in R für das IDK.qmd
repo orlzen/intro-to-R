@@ -45,63 +45,28 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
-#| echo: FALSE
-# knitr::purl(input = "Einführung in R für das IDK.qmd", output = "Einführung in R für das IDK - Code.R", documentation = 0)
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-# csv
-Churn <- readr::read_table(here("Daten", "Churn.csv"))
-
-# txt
-Arrivals <- readr::read_table(here("Daten", "Arrivals.txt"))
-
-# Excel
-alpenquer <- readxl::read_excel(here("Daten", "Alpenquerender_Gueterverkehr_Schiene.xls"))
-
-# rda (eigenes R-Format)
-load(here("Daten", "Treibstoffpreise_CH.rda"))
-# Daten müssen hier keinem Objekt mehr zugewiesen werden!
-
-# Import von SPSS
-car_sales <- haven::read_spss(here("Daten", "car_sales.sav"))
-```
-
 ## Vorbereitung
 
-Dies ist eine kurze Einleitung in R und RStudio für das IDK. Dazu gehören die folgenden Dateien:
+Dies ist eine kurze Einleitung in R und RStudio für das IDK. Zur Einleitung gehören die folgenden Dateien:
 
 -   R-Skript mit Beispielcode: "Einführung in R für das IDK - Codes.R"
--   Datensätze in verschiedenen Formaten:
+-   Datensätze in verschiedenen Formaten (im gezippten Ordner "Daten"):
     -   "Alpenquerender_Gueterverkehr_Schiene.xlsx"
     -   "Arrivals.txt"
     -   "car_sales.sav"
     -   "Churn.csv"
     -   "Treibstoffpreise_CH.rda"
--   shiny-Demo: "app.R"
+    -   shiny-Demo: "app.R"
 
-Die Daten können mit dem untenstehenden Button "Daten herunterladen" heruntergeladen werden. Bitte entpackt das .zip und speichert die Daten ab, idealerweise in einem Ordner namens "Daten", welcher sich in einem Hauptordner befindet, wo das Skript "Einführung in R für das IDK - Codes.R" abgelegt ist.
+Als Vorbereitung bitte die folgenden Schritte ausführen:
 
-```{r}
-#| echo: false
-#| warning: false
+1.  R und RStudio installieren (@sec-rstudio)
+2.  RStudio starten und ein Projekt eröffnen (@sec-projekte), z.B. mit Namen "Einführung R" in einem Ordner / einem Ort eurer Wahl
+3.  In diesem Projektordner zwei Unterordner anlegen: "Daten" und "Datenexport"
+4.  Die gezippten Daten im Unterordner "Daten" entzippen und ablegen
+5.  Das R-Skript "Einführung in R für das IDK - Codes.R" und diese Anleitung ("Einführung in R für das IDK.html") im Projektordner ablegen
 
-download_dir(
-  path = here("Daten"),
-  output_name = "Beispieldaten",
-  button_label = "Daten herunterladen",
-  button_type = "success",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
-## R und RStudio
+## R und RStudio {#sec-rstudio}
 
 -   Basisprogramm ist R
 -   Benutzt wird es aber meistens über RStudio (angenehmere Oberfläche)
@@ -119,6 +84,30 @@ download_dir(
     -   Projektordner ("Files"; unten rechts)
     -   Abbildungen ("Plots"; unten rechts)
 
+## Projekte {#sec-projekte}
+
+-   Sehr zu empfehlen: Projekt anlegen für verschiedene Analysen
+-   "File" -\> "New Project" oder oben rechts auf "Project: (None)" -\> "New Project"
+    -   Auswahl aus verschiedenen Ablagemöglichkeiten. Am einfachsten: "New Directory" (@fig-new-project).
+    -   Falls mit Versionskontrolle gearbeitet wird (siehe @sec-github): "Version Control"
+    -   Unter "Project Type" ebenfalls "New Project" wählen
+    -   Unter "Directory name:" dem Projekt einen Namen geben und unter "Create project as subdirectory of:" den Speicherort für den Projektordner auswählen (@fig-new-project-name-path).
+
+![Neues Projekt eröffnen: Projekt eröffnen](images/Screenshot%20(39).png){#fig-new-project alt="Neues Projekt eröffnen"}
+
+![Neues Projekt eröffnen: Verzeichnisname und Speicherort](images/Screenshot%20(69).png){#fig-new-project-name-path}
+
+-   Vorteile:
+    -   Ein Hauptordner für ganzes Projekt
+    -   R kann Einstellung pro Projekt speichern
+    -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
+    -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
+-   Best practice: Sauber getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
+-   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer.
+-   Allgemein gültige Pfade mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
+    -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`" und startet im Projektordner (der irgendwo abgelegt werden kann)
+    -   Daten einlesen z.B. mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind.
+
 ## Kleinere Unterschied zu SPSS
 
 -   Neben Skripten (analog zu SPSS-Syntax) gibt es eine Konsole (für freie Eingabe)
@@ -134,45 +123,26 @@ download_dir(
     -   {stats} für statistische Anwendungen
     -   {graphics} für einfache Abbildungen
 -   Verschiedene mehr oder weniger spezielle Anwendungen benötigen aber spezielle Pakete
--   Paket installieren (nur beim ersten Mal): `install.packages("ggplot2")`
--   Paket laden für Nutzung: `library(ggplot2)` (Keine Anführungszeichen nötig)
+-   Paket installieren (nur beim ersten Mal): `install.packages("name-des-pakets")`
+-   Paket laden für Nutzung: `library(name-des-pakets)` (Keine Anführungszeichen nötig)
 -   Achtung, wenn verschiedene Pakete *Funktionen mit gleichem Namen* verwenden (@fig-conflicting-functions)
--   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird):
+-   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird, eine "überlager" die andere):
     -   `dplyr::filter()`
     -   `stats::filter()`
 
 ![Konflikte bei der Funktion "filter()", die im Paket {dplyr} und im Paket {stats} vorkommt, ebenso "lag()"](images/Screenshot%20(44).png){#fig-conflicting-functions}
 
--   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig...
--   Einige Funktionen kommen auch identisch in versch. Paketen vor!
--   Achtung: Mit jedem benutzten Paket entstehen Abhängigkeiten (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifische Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
--   Pakete, die auf CRAN ("The Comprehensive R Archive Network", <https://cran.r-project.org/web/packages/available_packages_by_name.html>) sind, haben eine gewisse Qualitätskontrolle durchlaufen. Es lassen sich aber auch individuelle Pakete installieren, die nicht auf CRAN sind (jede:r kann / darf ein R-Paket schreiben).
-
-## Projekte {#sec-projekte}
-
--   Sehr zu empfehlen, sobald man nicht nur eine einzelne quick and dirty-Analyse machen will: Projekt anlegen
-    -   File -\> New Project -\> (@fig-new-project)
-        -   Auswahl aus verschiedenen Ablagemöglichkeiten. Am einfachsten: "New Directory".
-        -   Falls mit Versionskontrolle gearbeitet wird (siehe @sec-github): "Version Control"
-
-![Neues Projekt eröffnen](images/Screenshot%20(39).png){#fig-new-project alt="Neues Projekt eröffnen"}
-
--   Vorteile:
-    -   Ein Hauptordner für ganzes Projekt
-    -   R kann Einstellung pro Projekt speichern
-    -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
-    -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
--   Getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
--   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer
--   Allgemein gültige Pfade mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
-    -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`"
-    -   Daten einlesen mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind
+-   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig.
+-   Einige Funktionen kommen auch identisch in verschiedenen Paketen vor!
+-   Achtung: Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
+-   Bei grossen, viel benutzten und gut unterhaltenen Paketen ist das aber selten ein Problem.
+-   Pakete, die auf CRAN ("The Comprehensive R Archive Network", <https://cran.r-project.org/web/packages/available_packages_by_name.html>) sind, haben eine gewisse Qualitätskontrolle durchlaufen. Diese können mit `install.packages()` installiert werden. Es lassen sich aber auch individuelle Pakete installieren, die nicht auf CRAN sind (jede:r kann / darf ein R-Paket schreiben), dies ist dann etwas komplizierter.
 
 # Daten in R
 
 ## Objekte {#objekte}
 
-R kann verschiedene Daten(sätze) *gleichzeitig laden* (oben rechts in "Environment"; @fig-environment-list und @fig-environment-grid, je nach Darstellung), diese können *verschiedene Typen* sein:
+R kann verschiedene Daten(sätze) als Objekte *gleichzeitig laden* (oben rechts in "Environment"; @fig-environment-list und @fig-environment-grid, je nach Darstellung), diese können *verschiedene Typen* sein:
 
 -   Klassische Datensätze mit Fällen in Zeilen und Variablen in Spalten ("data frame" genannt in RStudio, hier z.B. "alpenquer", "Arrivals", "car_sales", "Churn")[^1]
 -   Matrizen (z.B. unten "m"; Matrizen haben immer gleichen Datentyp in den Spalten, data frames können verschiedene Daten haben (numerisch, string, logisch, faktoren))
@@ -180,7 +150,7 @@ R kann verschiedene Daten(sätze) *gleichzeitig laden* (oben rechts in "Environm
 -   Nur ein einzelner Wert (z.B. "sepal_length_mean" oder "x")
 -   Liste von Werten, die im Gegensatz zu Vektoren genauer spezifiziert sind (z.B. Resultate von Analysen mit Koeffizienten, Parameter etc., z.B. "fit-iris")
 
-[^1]: Erweiterungen des klassischen data frames aus {base} R sind "tibbles" im tidyverse-Universum (siehe @sec-tidyverse) oder "data.tables" bei Benutzung vom Paket {data.table} (siehe <https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html>)
+[^1]: Erweiterungen des klassischen data frames aus {base} R sind "tibbles" im tidyverse-Universum (siehe @sec-tidyverse), oder "data.tables" bei Benutzung vom Paket {data.table} (siehe @data.table oder <https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html>)
 
 ![Environment mit verschiedenen geladenen Objekten; Ansicht "List"](images/Screenshot%20(61).png){#fig-environment-list}
 
@@ -190,21 +160,21 @@ R kann verschiedene Daten(sätze) *gleichzeitig laden* (oben rechts in "Environm
     -   Objekte und ihre Elemente werden mit `$` voneinander getrennt
     -   Z.B. weist `iris$Sepal.Width` hin auf die Variable "Sepal.Width" im Datensatz "iris", `ToothGrowth$len` auf Variable "len" im Datensatz "ToothGrowth" etc.
 -   Daten können auch angeschaut werden, entweder mit `View()` oder durch klicken auf das Objekt im Fenster "Environment"
--   In einer Analyse können Variablen aus verschiedenen Datensätzen kombiniert werden, z.B. `(mean(iris$Sepal.Width)) + (median(ToothGrowth$len))`
+-   In einer Analyse können Variablen aus verschiedenen Datensätzen kombiniert werden, ohne dass die Datensätze kombiniert werden müssen, z.B. berechnet `(mean(iris$Sepal.Width)) + (median(ToothGrowth$len))` die Summe der Mittelwerte der Variable "Sepal.Width" aus dem Datensatz "iris" und der Variable "len" aus dem Datensatz "ToothGrowth".
 
 ## Importieren von Daten
 
 -   Für uns sind am ehesten "klassische" Datensätze relevant - Spalten sind Variablen und Zeilen sind Beobachtungen / Fälle
 -   Je nach Dateiformat sind zum Import Pakete notwendig (oder zumindest hilfreich)
--   Manuell / quick and dirty: Unten rechts den entsprechenden Ablageordner suchen -\> Klicken -\> "Import dataset"
+-   Manuell / quick and dirty: Unten rechts unter "Files" den entsprechenden Ablageordner suchen -\> Klicken auf den Datensatz -\> "Import dataset" (@fig-datenimport-menu) oder oben links auf "File" -\> "Import dataset".
 
 ![Datenimport eines CSV via Menu](images/image-874524877.png){#fig-datenimport-menu}
 
--   Oder - besser (Reproduzierbarkeit!) - via Code (ggf. aus dem Importmenu kopieren): Unterschiedlich je nach Datenformat
--   Viele Daten lassen sich mit bestehenden (base R) Funktionen laden, z.B. `read.csv()` für CSV oder `read.table()` für Tabellen (Excel)
--   Es gibt neben den bestehenden Funktionen auch andere, wie {readr} [@readr] für Textdokumente oder {readxl} [@readxl] für Excel-Tabellen, welche das gleiche Ziel haben (Datenimport), aber ggf. andere Einstellungsmöglichkeiten haben oder Daten automatisiert erkennen
--   Spezielle Formate brauchen ggf. spezielle Pakete, wie {haven} [@haven] für den Import von SPSS- oder STATA-Daten
-    -   **Achtung**: R geht mit Labels ganz anders um, können ggf. nicht importiert werden (siehe @sec-kategoriale-variablen)!
+-   Oder - besser (Reproduzierbarkeit!) - via Code (ggf. aus dem Importmenu kopieren): Unterschiedlich je nach Datenformat.
+-   Viele Daten lassen sich mit bestehenden (base R) Funktionen laden, z.B. `read.csv()` für CSV oder `read.table()` für Tabellen (Excel).
+-   Es gibt neben den bestehenden Funktionen auch andere, wie {readr} [@readr] für Textdokumente oder {readxl} [@readxl] für Excel-Tabellen, welche das gleiche Ziel haben (Datenimport), aber ggf. andere Einstellungsmöglichkeiten haben oder Daten automatisiert erkennen.
+-   Spezielle Formate brauchen ggf. spezielle Pakete, wie {haven} [@haven] für den Import von SPSS- oder STATA-Daten.
+    -   **Achtung**: R geht mit Labels ganz anders um, diese können ggf. nicht importiert werden (siehe @sec-kategoriale-variablen)!
 -   Es gibt auch einige R-spezifische Datenformate:
     -   Bereits in R bestehenden Daten: `data("name")`; ohne Zuweisung an Objekt
     -   Ein einzelnes Objekt ".rds": `readRDS("name.rds")`; braucht Zuweisung an Objekt
@@ -264,6 +234,7 @@ haven::write_sav(iris, here("Datenexport", "iris.sav"))
     -   "*num*": Numerisch (Zahlen, Standard, alle reellen Zahlen)
     -   "*int*": Numerisch (Zahlen; integer, nur ganzzahlige Werte)
     -   "*chr*": character (Buchstaben, String in SPSS)
+    -   "*factor*": Kategoriale Variablen (ordinal skalierte Variablen, siehe @sec-kategoriale-variablen)
     -   "*logi*": logical (TRUE / FALSE)
     -   "*POSIXct* oder *POSIXt*": Datumsformat von R
     -   "*ts*": Zeitreihe (time series, eigenes spezifisches Format in R)
@@ -571,15 +542,38 @@ mean(car_sales$price)
 mean(car_sales$price, na.rm = TRUE)
 ```
 
-## Kategoriale / nominale Variablen & labels {#sec-kategoriale-variablen}
+## Kategoriale / ordinale Variablen & labels {#sec-kategoriale-variablen}
 
--   Auch in R werden kategoriale Variablen als Nummer (integers) gespeichert mit einem zugewiesenen "level"
+-   Auch in R können kategoriale Variablen als Nummer (integers) gespeichert mit einem zugewiesenen "level"
 -   R zeigt aber normalerweise nur die "levels" an, nicht die dahinterliegenden integers
--   Labels für numerisch codierte kategoriale Variablen sind in R eher untypisch
--   Häufiger sind die Variablen direkt codiert, als "männlich" oder "weiblich" anstatt "0 = männlich" und "1 = weiblich", d.h. die Variablen werden als Faktorvariablen gespeichert
+-   Labels für numerisch codierte kategoriale Variablen sind in R eher untypisch, häufiger sind die Variablen direkt codiert, als "männlich" oder "weiblich" anstatt "0 = männlich" und "1 = weiblich", d.h. die Variablen werden als Faktorvariablen gespeichert
 -   Alternative zu base R: Paket {expss} [@expss]
     -   <https://cran.r-project.org/web/packages/expss/expss.pdf>
     -   Ermöglicht zudem auch SPSS-ähnliche Kreuztabellen, was in R auch eher mühsam ist (siehe @sec-kreuztabellen)
+-   Möchte man wirklich Faktorvariablen mit numerischen Werten und Textlabels, geht das z.B. mit folgendem Code: `sex = factor(c(1, 2, 1, 2, 1, 2), labels = c("Female", "Male")))`
+
+```{r}
+faktorbeispieldaten <- data.frame(age = c(21, 30, 25, 41, 29, 33), # 6 Altersangaben
+                                  sex = factor(c(1, 2, 1, 2, 1, 2), # 6 Geschlechtsangaben
+                                               labels = c("Female", "Male")))
+# Labels für Geschlecht (1 = "Female", 2 = "Male", automatisch zugeteilt)
+
+# Gleiches Ergebnis, aber ohne numerische Faktorvariable
+faktorbeispieldaten_2 <- data.frame(age = c(21, 30, 25, 41, 29, 33), # 6 Altersangaben
+                                  sex = factor(c("Female", "Male", "Female", "Male", "Female", "Male"))) 
+```
+
+## Variablenlabels
+
+-   Auch Variablenlabels sind in R eher selten, können aber gesetzt werden mit speziellen Paketen, z.B. auch wieder mit {expss} [@expss] mit folgendem Code: `expss::apply_labels(df, var = "label")`
+
+```{r}
+faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
+                                           age = "Alter in Jahren",
+                                           sex = "Geschlecht")
+```
+
+-   **Achtung** wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier: <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
 
 # Recodierungen und Berechnung neuer Variablen {#sec-recodierung}
 
@@ -610,7 +604,7 @@ iris <- iris |>
   mutate(petal_total = Petal.Length + Petal.Width)
 ```
 
-## Recodierung von kategoriellen Faktorvariablen
+## Recodierung von kategorialen Faktorvariablen
 
 Mit dem Paket {dplyr} aus dem tidyverse (siehe @sec-tidyverse), weil hier die Vorteile von {dplyr} gegenüber base R definitiv zum Zug kommen!
 
@@ -982,9 +976,9 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 -   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
 -   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot, @fig-iris-sepallength-histogram-ggplot-facet oder @fig-iris-sepallength-histogram-ggplot-identity
 -   Literatur hier: @wickham2016a oder hier: <https://ggplot2-book.org/index.html>
--   Grundsätzliche Idee: Abbildung erstellen in Ebenen
+-   Grundsätzliche Idee: Abbildung erstellen in Ebenen von unten nach oben
     -   Zuunterst: Daten
-    -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe)
+    -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe; "aesthetics")
     -   Nächste Ebene: Als was visualisieren (Säulen, Boxplot, Punkte etc.)
     -   Nächste Ebene: Beschriftungen
     -   Nächste Ebene...
@@ -1221,7 +1215,7 @@ plot(fit_iris, which = 6)
 -   Betrieben von Posit, die auch RStudio betreiben -\> Open Source
 -   <https://quarto.org/>
 -   Kann auch in anderen Programmen betrieben werden (z.B. VS Code)
--   Perfekte Zusammenarbeit mit Zotero!
+-   Gute Einbettung von Zotero!
 -   Output in div. Formaten möglich (Word, PDF, Folien, HTML)
 -   Kein Copy/Paste von SPSS zu Excel zu Word!
 -   Hat visuellen Editor (@fig-quarto-visual-editor)!
@@ -1257,7 +1251,7 @@ print("Mean is:", x)
 -   Eigene Syntaxstruktur[^2], aufbauend / hintereinander verknüpft, weniger verschachtelt als base R:
     1.  Welche Daten sollen benutzt werden?
     2.  Was soll damit gemacht werden?
-    3.  Verketten mit dem "Pipe"-Operator (`|>`, früher `%>%`); bedeutet sozusagen "dann mach das..."
+    3.  Jeweils verketten mit dem "Pipe"-Operator (`|>`, früher `%>%`); bedeutet sozusagen "dann mach das..."
 -   Codebeispiel für base R und tidyverse: Im iris-Datensatz die Species "virginica" filtern und daraus eine neue Variable bilden mit der Summe aus "Sepal Length" und "Sepal Width", diese Daten neu abspeichern
 
 [^2]: Es gibt durchaus Stimmen, die sich gegenüber Tidyverse kritisch äussern mit dem Argument, es sei unnötig, mache alles komplizierter, und mit Base R sei auch alles bereits möglich, was das Tidyverse kann.
@@ -1269,8 +1263,7 @@ library(tidyverse)
 data("iris")
 
 # Mit base R
-virginica_base <- transform(subset(iris, 
-                                   Species == "virginica"),
+virginica_base <- transform(subset(iris, Species == "virginica"),
                             sepallength_width = (Sepal.Length + Sepal.Width),
                             petallength_width = (Petal.Length + Petal.Width))
 
@@ -1278,9 +1271,9 @@ View(virginica_base)
 
 # Mit tidyverse
 virginica_tidy <- iris |> 
-  filter(Species == "virginica") |> 
-  mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
-  mutate(petallength_width = (Petal.Length + Petal.Width))
+  dplyr::filter(Species == "virginica") |> 
+  dplyr::mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
+  dplyr::mutate(petallength_width = (Petal.Length + Petal.Width))
 
 View(virginica_tidy)
 
@@ -1288,9 +1281,11 @@ View(virginica_tidy)
 # bleibt die Zeilennummerierung wie im ursprünglichen Datensatz, fängt bei 101 an
 ```
 
--   Das tidyverse ist das ganze "Universum", zusammengesetzt aus verschiedenen Paketen. Je nach Bedürfnis werden mit `library(tidyverse)` gleich alle Pakete oder ansonsten nur einzelne geladen.
+-   Das tidyverse ist das ganze "Universum", zusammengesetzt aus verschiedenen Paketen.
 
-    -   {ggplot2}: @ggplot2-2, Daten visualisieren
+-   Die wichtigsten Pakete sind:
+
+    -   {ggplot2}: @ggplot2-4, Daten visualisieren
 
     -   {tidyr}: @tidyr, Daten bereinigen / Umformatieren
 
@@ -1302,16 +1297,27 @@ View(virginica_tidy)
 
     -   {forcats}: @forcats, Umgang mit kategoriellen Variablen (Faktorvariablen)
 
-    -   etc. ...
+    -   {lubridate}: @lubridate, für den Umgang mit Kalenderdaten und Zeiten
 
--   Nutzung:
-
-    -   `library(tidyverse)`: Lädt ganzes Universum (alle Pakete)
-    -   `library(ggplot2)`: Lädt nur Paket "ggplot2"
-
--   <https://www.tidyverse.org/>
+    -   Und weitere, siehe <https://www.tidyverse.org/packages/>
 
 -   Open source Lehrbuch zum Tidyverse: [@wickham2016b] (Hadley Wickham ist Chief Scientist bei Posit, der Firma, die RStudio betreibt)
+
+-   Nette Ergänzung, wenn Funktionen aus {tidyr} oder {dplyr} genutzt werden: {tidylog} ist ein sogenannter "wrapper" für Funktionen aus diesen beiden Paketen: Resultat ist das gleiche, aber es wird jeweils angezeigt, was sich nach jedem Arbeitsschritt verändert hat [@tidylog]. Nutzung: `tidylog::filter()` anstatt `dplyr::filter()` etc.
+
+```{r}
+#| echo: TRUE
+#| warning: TRUE
+
+
+# Mit tidylog
+virginica_tidylog <- iris |> 
+  tidylog::filter(Species == "virginica") |> 
+  tidylog::mutate(sepallength_width = (Sepal.Length + Sepal.Width)) |>   
+  tidylog::mutate(petallength_width = (Petal.Length + Petal.Width))
+```
+
+-   Beachte: Trotz 50 Fällen, die bleiben, gibt es nur 29 eindeutige (unique) Fälle, weil einige Fälle mehrfach vorkommen (siehe `table(iris$sepallength_width`))
 
 ## Arbeit mit Textvariablen (character / string)
 
@@ -1388,6 +1394,7 @@ vierfach(10)
 -   Aus Software Center "Git" installieren
 -   Ist in RStudio integriert (oben rechts "Git"), braucht kein weiteres Programm
 -   <https://github.com> resp. eigene Version für ZHAW: <https://github.zhaw.ch/>
+-   Unter <https://github.com/orlzen/intro-to-R> ist z.B. der Code für diese Einführung öffentlich sichtbar, die Änderungen sind protokolliert und können von allen nachvollzogen werden.
 -   Einführung speziell für R z.B. hier: <https://happygitwithr.com/index.html>
 -   Im Intranet der ZHAW: <https://zhaw.sharepoint.com/:b:/r/sites/osc/Freigegebene%20Dokumente/2021_10_27%20-%20Git%20why%20and%20how.pdf?csf=1&web=1&e=2EehhW> oder <https://intra.zhaw.ch/departemente/school-of-engineering/services/dienste-tools/soe-it-infrastruktur/git-umgebung/>
 
