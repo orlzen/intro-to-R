@@ -511,7 +511,7 @@ ggplot(iris) +
         main = "Sepal Length (mit ggplot, Var. 3)"
     )
 
-
+# Mit übertriebenen Darstellungen
 ggplot(iris) +
   aes(x = Species) +
   geom_bar(fill = "pink") + # Pinke Füllung
@@ -522,6 +522,28 @@ ggplot(iris) +
              aes(label = after_stat(count)), # Label ist die gezählte Anzahl
              position = position_stack(vjust = 0.5)) +   # Beschriftung ist vertikal nach unten versetzt
   theme_dark()              # Anderes "theme"
+
+# Mit ZHAW-Blau
+
+ggplot(iris) +
+  aes(x = Petal.Length,
+      y = Sepal.Length) +
+  geom_point(col = "#0079DB",
+             size = 3) +
+  xlim(0, 2.2) +
+  ylim(3, 8.3) +
+  annotate("text",
+           x = 1,
+           y = 7.5,
+           label = "Diese Gruppe hat grössere Blumen") +
+  geom_curve(aes(x = 1,
+                 y = 7.2,
+                 xend = 1.4,
+                 yend = 6.5),
+             arrow = arrow()) +
+  theme_minimal() +
+  labs(x = "Länge Blüttenblatt [in cm]",
+       y = "Länge Kelchblatt [in cm]")
 
 ## Abbildungen über das Menu erstellen mit dem {esquisse}-Paket ----
 

@@ -816,10 +816,10 @@ expss::cro_tpct(ToothGrowth$supp, list(total(), ToothGrowth$dose),
 
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
 -   Mehr Individualisierung mit Paket {ggplot2} (@sec-ggplot)
--   vorschlag von bibs: Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
+-   Empfehlung: Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
 -   Ausgabe der Abbildungen unten rechts im Fenster "Plots" (evtl. wechseln von "Files")
     -   Abbildung vergrössern in neuem Fenster mit Klick auf "Zoom"
--   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species)
+-   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species), weil die Variable "Species" als kategoriale Variable erkannt wird.
 -   Möglichkeit, die Abbildungen gleich zu exportieren und in einem Ordner zu speichern (für Benutzung in einer anderen Anwendung)
     -   Manuell (@fig-plot-export-manual)
     -   Bei ggplot2-Abbildungen mit Code: `ggsave(here("Abbildungen", "pairs-plot-iris.png"))` -\> speichert im Unterordner "Abbildungen" des Projektes (@sec-projekte!) die Abbildung im png-Format
@@ -974,8 +974,10 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 -   Paket zur Datenvisualisierung, Teil des "Tidyverse"-Universum (siehe unten @sec-tidyverse)
 -   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
--   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot, @fig-iris-sepallength-histogram-ggplot-facet oder @fig-iris-sepallength-histogram-ggplot-identity
--   Literatur hier: @wickham2016a oder hier: <https://ggplot2-book.org/index.html>
+-   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien) oder @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie)
+-   Literatur hier:
+    -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
+    -   @chang
 -   Grundsätzliche Idee: Abbildung erstellen in Ebenen von unten nach oben
     -   Zuunterst: Daten
     -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe; "aesthetics")
@@ -1003,9 +1005,7 @@ ggplot(iris) +                                     # Daten
     geom_histogram() +                             # Art der Visualisierung 
     labs(                                          # Labels 
         x = "Länge in cm",                         # X-Achse
-        y = "Häufigkeit",                          # Y-Achse
-        main = "Sepal Length (mit ggplot, Var. 1)" # Titel
-    )
+        y = "Häufigkeit")                          # Titel
 ```
 
 ```{r}
@@ -1019,9 +1019,7 @@ ggplot(iris) +
     facet_wrap(~ Species) +            # Pro Ausprägung von "Species" eine Abbildung  
     labs(
         x = "Länge in cm",
-        y = "Häufigkeit",
-        main = "Sepal Length (mit ggplot, Var. 2)"
-    )
+        y = "Häufigkeit")
 ```
 
 ```{r}
@@ -1038,9 +1036,7 @@ ggplot(iris) +
     theme_minimal() +                       # Weisser Hintergrund, kein Rahmen
     labs(
         x = "Länge in cm",
-        y = "Häufigkeit",
-        main = "Sepal Length (mit ggplot, Var. 3)"
-    )
+        y = "Häufigkeit")
 ```
 
 -   Man kann es auch übertreiben mit den Einstellungen (@fig-iris-species-barplot)...
@@ -1063,8 +1059,43 @@ ggplot(iris) +
   theme_dark()              # Anderes "theme"
 ```
 
+-   @fig-iris-scatter:
+    -   Füllfarbe der Punkte in der ZHAW-Farbe im HEX-Code (`#0079DB`), Punkte vergrössert (für die Umwandlung eines CMYK in Hex, z.B.: <https://colordesigner.io/convert/cmyktohex>)
+    -   Grenzen der X-Achse manuell gesetzt mit `xlim()` und `ylim()`
+    -   Beschriftungstext in Abbildung drin mit `annotate()`
+    -   Pfeil mit `geom_curve()`
+
+```{r}
+#| label: fig-iris-scatter
+#| fig-cap: "Verteilung von Petal.Length und Sepal.Length (iris) in den ZHAW-Farben, mit weiteren Zusätzen"
+
+ggplot(iris) +
+  aes(x = Petal.Length,
+      y = Sepal.Length) +
+  geom_point(col = "#0079DB",
+             size = 3) +
+  xlim(0, 2.2) +
+  ylim(3, 8.3) +
+  annotate("text",
+           x = 1,
+           y = 7.5,
+           label = "Diese Gruppe hat grössere Blumen") +
+  geom_curve(aes(x = 1,
+                 y = 7.2,
+                 xend = 1.4,
+                 yend = 6.5),
+             arrow = arrow()) +
+  theme_minimal() +
+  labs(x = "Länge Blüttenblatt [in cm]",
+       y = "Länge Kelchblatt [in cm]")
+```
+
+
+-   Für Zusatzpakete zu ggplot2 und Inspiration, wie man was sonst noch visualisieren kann: <https://exts.ggplot2.tidyverse.org/gallery/>
+
 ## Abbildungen über das Menu erstellen mit dem {esquisse}-Paket {#sec-esquisse}
 
+-   Interaktive Erweiterung für RStudio für die Erstellung von Abbildungen
 -   Speziell daran: Dieses Paket wird einmal installiert (`install.packages("esquisse")`), muss aber nachher nicht mit `library()` geladen werden (s. @sec-pakete), sondern steht als "Addin" in RStudio zur Verfügung (@fig-addin-esquisse; auswählen über "'ggplot2' builder")
 
 ![Zugriff auf "esquisse" über die Addins](images/Screenshot%20(50).png){#fig-addin-esquisse}
