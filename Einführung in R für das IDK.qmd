@@ -78,11 +78,12 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
 
 -   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, Farbe und Schrift lassen sich ebenfalls anpassen, siehe @fig-layout-rstudio)
 -   Am wichtigsten:
-    -   Skript (hier oben links)
+    -   Skript (hier oben links, analog SPSS-Syntax oder do-File in STATA)
     -   Konsole für freie Eingabe von Code und Output von Analysen (unten links)
-    -   Geladene Daten & Objekte in der Umgebung ("Environment"; oben rechts)
-    -   Projektordner ("Files"; unten rechts)
-    -   Abbildungen ("Plots"; unten rechts)
+    -   Geladene Daten & Objekte in der Umgebung (Tab "Environment"; oben rechts)
+    -   Projektordner (Tab "Files"; unten rechts)
+    -   Abbildungen (Tab "Plots"; unten rechts)
+    -   Verlauf der bisherigen Anwendungen (Tab "History"; oben rechts): Bereits benutzte Befehle können aus der History kopiert werden, z.B. direkt in die Konsole ("To Console") oder in ein Skript ("To Source").
 
 ## Projekte {#sec-projekte}
 
@@ -157,21 +158,21 @@ R kann verschiedene Daten(sätze) als Objekte *gleichzeitig laden* (oben rechts 
 
 ![Environment mit verschiedenen geladenen Objekten; Ansicht "Grid"](images/Screenshot%20(62).png){#fig-environment-grid}
 
--   Befehle müssen deshalb die zu benutzenden Objekte *eindeutig identifizieren*
+-   Befehle müssen deshalb die zu benutzenden Objekte *eindeutig identifizieren:*
     -   Objekte und ihre Elemente werden mit `$` voneinander getrennt
-    -   Z.B. weist `iris$Sepal.Width` hin auf die Variable "Sepal.Width" im Datensatz "iris", `ToothGrowth$len` auf Variable "len" im Datensatz "ToothGrowth" etc.
--   Daten können auch angeschaut werden, entweder mit `View()` oder durch klicken auf das Objekt im Fenster "Environment"
--   In einer Analyse können Variablen aus verschiedenen Datensätzen kombiniert werden, ohne dass die Datensätze kombiniert werden müssen, z.B. berechnet `(mean(iris$Sepal.Width)) + (median(ToothGrowth$len))` die Summe der Mittelwerte der Variable "Sepal.Width" aus dem Datensatz "iris" und der Variable "len" aus dem Datensatz "ToothGrowth".
+    -   Z.B. bezieht sich`iris$Sepal.Width` auf die Variable "Sepal.Width" im Datensatz "iris", `ToothGrowth$len` auf die Variable "len" im Datensatz "ToothGrowth" etc.
+-   In einer Anwendung können Variablen aus verschiedenen Datensätzen kombiniert werden, ohne dass die Datensätze kombiniert werden müssen, z.B. berechnet `mean(iris$Sepal.Width) + mean(ToothGrowth$len)` die Summe der Mittelwerte der Variable "Sepal.Width" aus dem Datensatz "iris" und der Variable "len" aus dem Datensatz "ToothGrowth".
+-   Nachfolgend wird der Platzhalter `df` für einen Datensatz verwendet ("data frame"), z.B. `mean(df$Var1)`.
 
 ## Importieren von Daten
 
 -   Für uns sind am ehesten "klassische" Datensätze relevant - Spalten sind Variablen und Zeilen sind Beobachtungen / Fälle
 -   Je nach Dateiformat sind zum Import Pakete notwendig (oder zumindest hilfreich)
 -   Manuell / quick and dirty: Unten rechts unter "Files" den entsprechenden Ablageordner suchen -\> Klicken auf den Datensatz -\> "Import dataset" (@fig-datenimport-menu) oder oben links auf "File" -\> "Import dataset".
+-   Oder - besser (Reproduzierbarkeit!) - via Code (ggf. aus dem Importmenu kopieren): Unterschiedlich je nach Datenformat.
 
 ![Datenimport eines CSV via Menu](images/image-874524877.png){#fig-datenimport-menu}
 
--   Oder - besser (Reproduzierbarkeit!) - via Code (ggf. aus dem Importmenu kopieren): Unterschiedlich je nach Datenformat.
 -   Viele Daten lassen sich mit bestehenden (base R) Funktionen laden, z.B. `read.csv()` für CSV oder `read.table()` für Tabellen (Excel).
 -   Es gibt neben den bestehenden Funktionen auch andere, wie {readr} [@readr] für Textdokumente oder {readxl} [@readxl] für Excel-Tabellen, welche das gleiche Ziel haben (Datenimport), aber ggf. andere Einstellungsmöglichkeiten haben oder Daten automatisiert erkennen.
 -   Spezielle Formate brauchen ggf. spezielle Pakete, wie {haven} [@haven] für den Import von SPSS- oder STATA-Daten.
@@ -205,6 +206,24 @@ data("AirPassengers") # Spezialfall Zeitreihe
 ```
 
 -   Man beachte, dass in den Daten "USArrests" die Fälle benannt / beschriftet sind (`View(USArrests)`), ohne dass die Information in einer Variable gespeichert ist. In "iris" sind die Daten einfach nummeriert.
+
+## Daten anschauen, ersten Überblick gewinnen
+
+Wollen die Daten visuell untersucht werden, gibt es verschiedene Möglickeiten:
+
+-   `View(df)`: Öffnet die Daten als Tabelle, analog der Datenansicht in SPSS. Eine Bearbeitung der Daten ist *nicht* möglich, lediglich eine Sortierung in den Spalten.
+
+-   Alternative zu `View(df)`: Oben rechts in "Environment" auf die Daten klicken.
+
+-   `head(df)`: Zeigt die ersten Einträge der Daten in der Konsole (mit `head(df, x)` kann die Anzahl Zeilen `x` definiert werden), die angezeigt werden sollen. Je nach Anzahl Variablen haben nicht alle Spalten Platz in der Anzeige.
+
+-   `tail(df)`: Analog `head(df)`, einfach die letzten Einträge in den Daten.
+
+-   `summary(df)`: Deskriptive Statistiken aller Variabeln im Datensatz (bei kategorialen Variablen die Häufigkeit, bei metrischen Variablen Minimum, Median, Mittelwert, Maximum und Quartile). Für deskriptive Statistiken einer einzelnen Variable: `summary(df$Var1)`.
+
+-   `dplyr::glimpse(df)`: Funktion aus dem {dplyr}-Paket (aus dem tidyverse, siehe @sec-tidyverse). Zeigt etwas mehr Daten an, dazu auch das Format der einzelnen Variablen (nicht zu verwechseln mit den Klassen, siehe @sec-variablentypen!)
+
+-   Weiteres zu deskriptiven Analysen im @sec-deskriptive-statistiken.
 
 ## Exportieren / Speichern von Daten
 
@@ -664,7 +683,7 @@ car_sales <- car_sales |>
 
 # Analysen
 
-## Erste deskriptive Statistiken
+## Erste deskriptive Statistiken {#sec-deskriptive-statistiken}
 
 ```{r, echo = TRUE}
 # Mittelwert von Sepal.Length in iris
