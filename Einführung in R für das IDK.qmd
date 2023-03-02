@@ -137,6 +137,7 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
 -   Achtung: Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
 -   Bei grossen, viel benutzten und gut unterhaltenen Paketen ist das aber selten ein Problem.
 -   Pakete, die auf CRAN ("The Comprehensive R Archive Network", <https://cran.r-project.org/web/packages/available_packages_by_name.html>) sind, haben eine gewisse Qualitätskontrolle durchlaufen. Diese können mit `install.packages()` installiert werden. Es lassen sich aber auch individuelle Pakete installieren, die nicht auf CRAN sind (jede:r kann / darf ein R-Paket schreiben), dies ist dann etwas komplizierter.
+-   Eine (zugänglichere) Einführung in die Welt der Pakete findet sich z.B. bei @ooms2023a, eine Übersichtssuche findet sich hier: <https://r-universe.dev/search/>
 
 # Daten in R
 
@@ -1090,7 +1091,6 @@ ggplot(iris) +
        y = "Länge Kelchblatt [in cm]")
 ```
 
-
 -   Für Zusatzpakete zu ggplot2 und Inspiration, wie man was sonst noch visualisieren kann: <https://exts.ggplot2.tidyverse.org/gallery/>
 
 ## Abbildungen über das Menu erstellen mit dem {esquisse}-Paket {#sec-esquisse}
@@ -1217,7 +1217,9 @@ plot(fit_iris, which = 6)
 
 -   Die Tidyverse-Bibel: <https://r4ds.hadley.nz/> (siehe @sec-tidyverse)
 
--   "Learning Statistics with R", ein Manuskript für Psychologiestudierende von @navarro. Gut für die basics, ohne Verweise auf das Tidyverse (alles in base R)
+-   "Learning Statistics with R", auf <https://learningstatisticswithr.com/lsr-0.6.pdf>, ein Manuskript für Psychologiestudierende von @navarro. Gut für die basics, ohne Verweise auf das Tidyverse (alles in base R)
+
+-   "R Workbook: Are you ready for R?", auf <https://www.michaelstrausz.com/r-workbook>, ein einfaches online-Lehrbuch von @strausza. Auch mit Hinweisen auf das Tidyverse.
 
 -   Verschiedene (technische) Handbücher zu R: <https://rstudio.github.io/r-manuals/>
 
@@ -1229,7 +1231,7 @@ plot(fit_iris, which = 6)
 
     -   {chatgpt}: @chatgpt-4; <https://github.com/jcrodriguez1989/chatgpt>
 
-    -   {gptstudio}: (noch nicht auf CRAN), <https://michelnivard.github.io/gptstudio/>
+    -   {gptstudio}: (noch nicht auf CRAN); <https://michelnivard.github.io/gptstudio/>
 
 # Weiterführendes
 
@@ -1417,6 +1419,15 @@ vierfach <- function(x) {
 
 # Ausführen der Funktion
 vierfach(10)
+
+# Zweites Beispiel mit Eingabe zweier Werte
+summiere <- function(a, b) {
+  c <- a + b
+  return(c)
+}
+
+# Ausführen der Funktion
+summiere(2, 3)
 ```
 
 ## Git und github {#sec-github}
