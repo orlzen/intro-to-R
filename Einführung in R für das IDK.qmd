@@ -84,6 +84,7 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
     -   Projektordner (Tab "Files"; unten rechts)
     -   Abbildungen (Tab "Plots"; unten rechts)
     -   Verlauf der bisherigen Anwendungen (Tab "History"; oben rechts): Bereits benutzte Befehle können aus der History kopiert werden, z.B. direkt in die Konsole ("To Console") oder in ein Skript ("To Source").
+-   User Guide für RStudio: <https://docs.posit.co/ide/user/>
 
 ## Projekte {#sec-projekte}
 
