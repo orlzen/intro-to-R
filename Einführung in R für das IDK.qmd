@@ -135,7 +135,8 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
 -   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird, eine "überlager" die andere):
     -   `dplyr::filter()`
     -   `stats::filter()`
--   Das {conflicted}-Paket @conflicted hilft bei Konflikten, indem es die Konflikte explizit benennt und Lösungen vorschlägt.\
+-   Das {conflicted}-Paket @conflicted hilft bei Konflikten, indem es die Konflikte explizit benennt und Lösungen vorschlägt.
+    -   **Achtung**: Die Ausführung von nicht eindeutigen Befehlen wird angehalten, wenn das {conflicted}-Paket geladen ist!
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig.
 -   Einige Funktionen kommen auch identisch in verschiedenen Paketen vor!
 -   Achtung: Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
@@ -602,6 +603,8 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
 
 ## Recodierung von numerischen Variablen
 
+### Numerische Variablen in numerische Variabeln umcodieren
+
 -   Mit base R: Einfach mit dem "Zuweisungs-Pfeil" (siehe @sec-objekte ) `<-` der Variable neue Werte zuweisen
 
 ```{r}
@@ -619,12 +622,25 @@ iris$sepal_total <- iris$Sepal.Length + iris$Sepal.Width
 library(dplyr)
 # Bestehende Variable "Petal.Length" logarithmieren
 iris <- iris |> 
-  mutate(PetalLength = log(iris$Petal.Length))
+  dplyr::mutate(PetalLength = log(iris$Petal.Length))
 
 # Neue Variable "petal_total" erstellen aus Summe
 # von Petal.Length + Petal.Width
 iris <- iris |> 
-  mutate(petal_total = Petal.Length + Petal.Width)
+  dplyr::mutate(petal_total = Petal.Length + Petal.Width)
+```
+
+### Numerische Variablen in kategoriale Variabeln (Faktorvariablen) umcodieren
+
+-   Mit der Funktion `cut()` aus Base R
+
+```{r}
+iris$petallength_cat <- cut(iris$Petal.Length, # Zuweisen an neue Variable
+    c(0, 0.5, 1, 1.5, 2), # Grenzen neuer Kategorien setzen
+    labels = c("tief", # Labels der Kategorien definieren
+               "tief-mittel",
+               "hoch-mittel",
+               "hoch"))
 ```
 
 ## Recodierung von kategorialen Faktorvariablen
