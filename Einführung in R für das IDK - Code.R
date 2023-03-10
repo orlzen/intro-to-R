@@ -248,12 +248,12 @@ iris$sepal_total <- iris$Sepal.Length + iris$Sepal.Width
 
 # Bestehende Variable "Petal.Length" logarithmieren
 iris <- iris |> 
-  mutate(PetalLength = log(iris$Petal.Length))
+  dplyr::mutate(PetalLength = log(iris$Petal.Length))
 
 # Neue Variable "petal_total" erstellen aus Summe
 # von Petal.Length + Petal.Width
 iris <- iris |> 
-  mutate(petal_total = Petal.Length + Petal.Width)
+  dplyr::mutate(petal_total = Petal.Length + Petal.Width)
 
 ### Numerische Variablen in kategoriale Variabeln (Faktorvariablen) umcodieren ----
 
