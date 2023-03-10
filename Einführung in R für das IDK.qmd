@@ -1253,6 +1253,8 @@ plot(fit_iris, which = 6)
 
 ![Hilfe zu filter (Funktion existiert in drei Paketen; davon das gewünschte Auswählen)](images/Screenshot%20(63).png){#fig-help-filter}
 
+-   Online-Klassen, Unterlagen, Lernmodule, Beispielcodes etc.: <https://stats.oarc.ucla.edu/r/>
+
 -   Die Tidyverse-Bibel: <https://r4ds.hadley.nz/> (siehe @sec-tidyverse)
 
 -   "Learning Statistics with R", auf <https://learningstatisticswithr.com/lsr-0.6.pdf>, ein Manuskript für Psychologiestudierende von @navarro. Gut für die basics, ohne Verweise auf das Tidyverse (alles in base R)
