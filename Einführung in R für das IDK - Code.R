@@ -237,6 +237,8 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
 
 ## Recodierung von numerischen Variablen ----
 
+### Numerische Variablen in numerische Variabeln umcodieren ----
+
 # Bestehende Variable "Petal.Length" logarithmieren
 iris$Petal.Length <- log(iris$Petal.Length)
 
@@ -252,6 +254,15 @@ iris <- iris |>
 # von Petal.Length + Petal.Width
 iris <- iris |> 
   mutate(petal_total = Petal.Length + Petal.Width)
+
+### Numerische Variablen in kategoriale Variabeln (Faktorvariablen) umcodieren ----
+
+iris$petallength_cat <- cut(iris$Petal.Length, # Zuweisen an neue Variable
+                            c(0, 0.5, 1, 1.5, 2), # Grenzen neuer Kategorien setzen
+                            labels = c("tief", # Labels der Kategorien definieren
+                                       "tief-mittel",
+                                       "hoch-mittel",
+                                       "hoch"))
 
 ## Recodierung von kategoriellen Faktorvariablen ----
 
