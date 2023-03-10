@@ -14,6 +14,7 @@ library(haven) # Import von SPSS, Stata etc.
 library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
 library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
+library(conflicted) # Für Hilfe mit Paket-Konflikten
 
 ## Daten laden ----
 # csv

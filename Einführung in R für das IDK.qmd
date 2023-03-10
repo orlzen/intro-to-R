@@ -128,12 +128,13 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
 -   Paket installieren (nur beim ersten Mal): `install.packages("name-des-pakets")`
 -   Paket laden für Nutzung: `library(name-des-pakets)` (Keine Anführungszeichen nötig)
 -   Achtung, wenn verschiedene Pakete *Funktionen mit gleichem Namen* verwenden (@fig-conflicting-functions)
--   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird, eine "überlager" die andere):
-    -   `dplyr::filter()`
-    -   `stats::filter()`
 
 ![Konflikte bei der Funktion "filter()", die im Paket {dplyr} und im Paket {stats} vorkommt, ebenso "lag()"](images/Screenshot%20(44).png){#fig-conflicting-functions}
 
+-   Dann muss ggf. das Paket mit zwei Doppelpunkten vorangestellt werden (R zeigt beim laden der beiden fraglichen Pakete an, welche Funktion aus welchem Paket benutzt wird, eine "überlager" die andere):
+    -   `dplyr::filter()`
+    -   `stats::filter()`
+-   Das {conflicted}-Paket @conflicted hilft bei Konflikten, indem es die Konflikte explizit benennt und Lösungen vorschlägt.\
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig.
 -   Einige Funktionen kommen auch identisch in verschiedenen Paketen vor!
 -   Achtung: Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
