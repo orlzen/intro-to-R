@@ -38,10 +38,10 @@ data("iris")
 data("USArrests")
 data("AirPassengers") # Spezialfall Zeitreihe
 
+## Exportieren / Speichern von Daten ----
+
 # Einzelnen Datensatz speichern im .Rds-Format
 saveRDS(Churn, here("Datenexport", "Churn_save.Rds"))
-
-## Exportieren / Speichern von Daten ----
 
 # Mehrere geladenen Daten speichern im .Rdata-Format
 save(list = c("Churn", "Arrivals"), 
