@@ -112,7 +112,11 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
     -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
     -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Best practice: Sauber getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
--   Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer.
+
+:::callout-important
+Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer.
+:::
+
 -   Allgemein gültige Pfade mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
     -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`" und startet im Projektordner (der irgendwo abgelegt werden kann)
     -   Daten einlesen z.B. mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind.
