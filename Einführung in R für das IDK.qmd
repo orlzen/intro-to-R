@@ -19,6 +19,12 @@ bibliography: references.bib
 csl: apa.csl
 ---
 
+::: callout-warning
+## Bemerkung
+
+Diese Einleitung und Übersicht ist sicher nicht komplett und wird laufend ergänzt. Bitte melden bei bibs\@zhaw.ch, wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
+:::
+
 # Einleitung
 
 ```{r}
