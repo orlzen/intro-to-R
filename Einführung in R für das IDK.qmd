@@ -142,10 +142,18 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
     -   `dplyr::filter()`
     -   `stats::filter()`
 -   Das {conflicted}-Paket @conflicted hilft bei Konflikten, indem es die Konflikte explizit benennt und Lösungen vorschlägt.
-    -   **Achtung**: Die Ausführung von nicht eindeutigen Befehlen wird angehalten, wenn das {conflicted}-Paket geladen ist!
+
+::: callout-caution
+Die Ausführung von nicht eindeutigen Befehlen wird angehalten, wenn das {conflicted}-Paket geladen ist!
+:::
+
 -   Unterschied zu SPSS: Dort gibt es keine verschiedenen Pakete, alle Funktionen sind für SPSS klar und eindeutig.
 -   Einige Funktionen kommen auch identisch in verschiedenen Paketen vor!
--   Achtung: Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
+
+::: callout-caution
+Mit jedem benutzten Paket können Abhängigkeiten entstehen (einige Pakete benötigen wiederum andere Pakete), im Extremfall funktioniert ein Paket plötzlich nicht mehr oder der Code, den man beim letzten Mal benutzt hat, funktioniert anders (für diese spezifischen Herausforderungen bei der Reproduzierbarkeit gibt es wiederum eigene Lösungen...).
+:::
+
 -   Bei grossen, viel benutzten und gut unterhaltenen Paketen ist das aber selten ein Problem.
 -   Pakete, die auf CRAN ("The Comprehensive R Archive Network", <https://cran.r-project.org/web/packages/available_packages_by_name.html>) sind, haben eine gewisse Qualitätskontrolle durchlaufen. Diese können mit `install.packages()` installiert werden. Es lassen sich aber auch individuelle Pakete installieren, die nicht auf CRAN sind (jede:r kann / darf ein R-Paket schreiben), dies ist dann etwas komplizierter.
 -   Eine (zugänglichere) Einführung in die Welt der Pakete findet sich z.B. bei @ooms2023a, eine Übersichtssuche findet sich hier: <https://r-universe.dev/search/>
@@ -186,7 +194,11 @@ R kann verschiedene Daten(sätze) als Objekte *gleichzeitig laden* (oben rechts 
 -   Viele Daten lassen sich mit bestehenden (base R) Funktionen laden, z.B. `read.csv()` für CSV oder `read.table()` für Tabellen (Excel).
 -   Es gibt neben den bestehenden Funktionen auch andere, wie {readr} [@readr] für Textdokumente oder {readxl} [@readxl] für Excel-Tabellen, welche das gleiche Ziel haben (Datenimport), aber ggf. andere Einstellungsmöglichkeiten haben oder Daten automatisiert erkennen.
 -   Spezielle Formate brauchen ggf. spezielle Pakete, wie {haven} [@haven] für den Import von SPSS- oder STATA-Daten.
-    -   **Achtung**: R geht mit Labels ganz anders um, diese können ggf. nicht importiert werden (siehe @sec-kategoriale-variablen)!
+
+::: callout-caution
+R geht mit Labels ganz anders um, diese können ggf. nicht importiert werden (siehe @sec-kategoriale-variablen)!
+:::
+
 -   Es gibt auch einige R-spezifische Datenformate:
     -   Bereits in R bestehenden Daten: `data("name")`; ohne Zuweisung an Objekt
     -   Ein einzelnes Objekt ".rds": `readRDS("name.rds")`; braucht Zuweisung an Objekt
@@ -241,7 +253,10 @@ Wollen die Daten visuell untersucht werden, gibt es verschiedene Möglickeiten:
 -   Export möglich in .csv, .xlsx oder ggf. in SPSS- oder STATA-Format mit {haven}
 -   Export in R-Formate wie `.Rds` oder `.Rdata` / `.rda` (identisch, aber die Endung `.Rdata` wird von Windows als zu R gehörend automatisch erkannt, `.rda` nicht. Ich würde deshalb `.Rdata` empfehlen).
 -   Idealerweise auch wieder das {here}-Paket benutzen (s. oben) für saubere Pfade
--   **Achtung**: Allfälliger Unterordner muss schon bestehen für Export darin
+
+::: callout-caution
+Ein allfälliger Unterordner muss schon bestehen für den Export darin
+:::
 -   Nb: Falls RStudio fragt, ob der Workspace gesichert werden soll: Immer "Nein" klicken, sonst lädt man beim nächsten Mal bearbeitete Daten in den Workspace und weiss nicht mehr, wie diese bearbeitet wurden.
 
 ```{r}
@@ -280,7 +295,12 @@ haven::write_sav(iris, here("Datenexport", "iris.sav"))
     -   Oder in Konsole individuell mit *Enter*
     -   Oder oben rechts im Skript auf "Run"
     -   Letzte Befehle aus der Konsole scrollen mit *Shift + Pfeil nach oben* oder im Fenster oben rechts auf "History"
--   Tipp: Teil eines längeren Codes markieren und mit *Ctrl + Enter* ausführen, bspw. ergibt `round(sqrt(122))` 11, ich kann aber auch nur `sqrt(122)` markieren und mit *Ctrl + Enter* ausführen, dann erhalte ich die ungerundete Zahl
+
+::: callout-tip
+## Ausführen von Teil-Code
+
+Teil eines längeren Codes markieren und mit *Ctrl + Enter* ausführen, bspw. ergibt `round(sqrt(122))` 11, ich kann aber auch nur `sqrt(122)` markieren und mit *Ctrl + Enter* ausführen, dann erhalte ich die ungerundete Zahl.
+:::
 
 ## Mathematische Operatoren und logische Operatoren {#sec-log-operatoren}
 
@@ -547,7 +567,8 @@ dim(iris)
 nrow(iris) # Anzahl Fälle / Reihen
 ncol(iris) # Anzahl Variablen / Spalten
 length(iris) 
-# Anzahl Variablen / Spalten (ACHTUNG: in diesem Fall, bei Vektoren gibt es die Länge des Vektors!)
+# Anzahl Variablen / Spalten 
+# (ACHTUNG: in diesem Fall, bei Vektoren gibt es die Länge des Vektors!)
 class(iris)
 head(iris) # Zeigt erste 6 Beobachtungen
 tail(iris) # Zeigt letzte 6 Beobachtungen
@@ -603,7 +624,9 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
                                            sex = "Geschlecht")
 ```
 
--   **Achtung** wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier: <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
+::: callout-caution
+Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier: <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
+:::
 
 # Recodierungen und Berechnung neuer Variablen {#sec-recodierung}
 
@@ -861,7 +884,13 @@ expss::cro_tpct(ToothGrowth$supp, list(total(), ToothGrowth$dose),
 
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
 -   Mehr Individualisierung mit Paket {ggplot2} (@sec-ggplot)
--   Empfehlung: Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
+
+::: callout-tip
+## Base R oder ggplot2?
+
+Für einfache, schnelle, explorative Abbildungen die einfachen Abbildungen aus dem {graphics}-Paket nutzen, für schönere, individualiserte (z.B. für Publikationen) eher {ggplot2}.
+:::
+
 -   Ausgabe der Abbildungen unten rechts im Fenster "Plots" (evtl. wechseln von "Files")
     -   Abbildung vergrössern in neuem Fenster mit Klick auf "Zoom"
 -   Manchmal erkennt R die Daten auch automatisch und macht den richtigen Plot, z.B. macht `plot(iris)` automatisch einen pairs-Plot (weil der ganze Datensatz angegeben wurde; @fig-iris-pairs), `plot(iris$Species)` macht automatisch ein Säulendiagramm der Variable "Species" (@fig-iris-species), weil die Variable "Species" als kategoriale Variable erkannt wird.
@@ -906,7 +935,9 @@ abline(h = mean(iris$Sepal.Length), # Höhe der Linie = Mittelwert
        lwd = 1) # Dicke des Striches
 ```
 
--   **Achtung**: Weil die Funktion `abline()` getrennt von der Abbildung erstellt wird, wird sie einfach immer bei der letzten Grafik eingefügt. Wenn ich zwischen dem Histogramm und der Linie eine andere Abbildung erstellt habe, wird sie einfach dort eingefügt!
+::: callout-caution
+Weil die Funktion `abline()` getrennt von der Abbildung erstellt wird, wird sie einfach immer bei der letzten Grafik eingefügt. Wenn ich zwischen dem Histogramm und der Linie eine andere Abbildung erstellt habe, wird sie einfach dort eingefügt!
+:::
 
 ## Boxplot
 
@@ -1271,13 +1302,15 @@ plot(fit_iris, which = 6)
 
 -   ChatGPT: Es gib mittlerweile einige Pakete zu ChatGPT, welche beim Codieren helfen sollen, indem sie Code-Vorschläge machen oder Code auf Fehler überprüfen.
 
-    -   Aber **Achtung**: Wie häufig bei ChatGPT stimmt nicht immer alles, was die AI sagt, auch wenn es plausibel tönt! Manchmal erfindet sie auch nicht existierende Funktionen...
-
     -   Man braucht auf jeden Fall einen API key (bekommt man einfach über den Zugang zu ChatGPT), welcher in RStudio hinterlegt werden muss
 
     -   {chatgpt}: @chatgpt-4; <https://github.com/jcrodriguez1989/chatgpt>
 
     -   {gptstudio}: (noch nicht auf CRAN); <https://michelnivard.github.io/gptstudio/>
+    
+::: callout-warning
+Wie häufig bei ChatGPT stimmt nicht immer alles, was die AI sagt, auch wenn es plausibel tönt! Manchmal erfindet sie auch nicht existierende Funktionen...
+:::    
 
 # Weiterführendes
 
