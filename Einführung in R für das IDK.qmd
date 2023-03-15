@@ -1,12 +1,13 @@
 ---
-title: "Einführung in R für das IDK"
-author: "Lorenz Biberstein, IDK, ZHAW"
-date: "`r Sys.time()`"
-date-format: medium
+title: Einführung in R für das IDK
+author: Lorenz Biberstein
+institute: Institut für Delinquenz und Kriminalprävention, ZHAW
+date: last-modified
 format:
   html:
     embed-resources: true
     df-print: kable
+  pdf: default
 always_allow_html: paged
 toc: true
 toc-depth: 5
