@@ -3,6 +3,19 @@
 
 # Vorbereitung ----
 
+## Benötigte Pakete installieren ----
+
+install.packages("tidyverse", dependencies = TRUE)
+install.packages("here", dependencies = TRUE)
+install.packages("readr", dependencies = TRUE)
+install.packages("readxl", dependencies = TRUE)
+install.packages("vtable", dependencies = TRUE)
+install.packages("janitor", dependencies = TRUE)
+install.packages("haven", dependencies = TRUE)
+install.packages("expss", dependencies = TRUE)
+install.packages("tidylog", dependencies = TRUE)
+install.packages("conflicted", dependencies = TRUE)
+
 ## Bibliotheken laden ----
 library(here) # Für saubere Pfade
 library(readr) # Import von Daten in versch. Formaten
@@ -11,7 +24,6 @@ library(ggplot2) # Schöne Abbildungen
 library(vtable) # Beschreibung von Daten
 library(janitor) # Für schöne Tabellen
 library(haven) # Import von SPSS, Stata etc.
-library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
 library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
 library(conflicted) # Für Hilfe mit Paket-Konflikten
@@ -68,6 +80,7 @@ farbe <- "rosa"
 farbe
 
 Erste_Zahl <- 4
+
 Zweite_Zahl <- 5
 
 Erste_Zahl * Zweite_Zahl
@@ -321,13 +334,14 @@ car_sales <- car_sales |>
 mean(iris$Sepal.Length)
 
 # Geht auch
-mean(iris[, 1])
+mean(iris[ , 1])
 
 # Geht auch
-mean(iris[, "Sepal.Length"])
+mean(iris[ , "Sepal.Length"])
 
 # Mittelwert als Objekt abspeichern
 sepal_length_mean <- mean(iris$Sepal.Length)
+sepal_width_mean <- mean(iris$Sepal.Width)
 sepal_length_mean
 
 # Ditto Median
@@ -394,6 +408,11 @@ ToothGrowth %>%
   adorn_pct_formatting(digits = 2) %>%
   adorn_ns() %>%
   adorn_title()
+
+ggplot(iris) +
+  aes(x = Sepal.Length, y = Sepal.Width) +
+  geom_point(shape = "circle", size = 1.5, colour = "red") +
+  theme_minimal()
 
 # Mit absoluten Zahlen
 expss::cro(ToothGrowth$supp, list(total(), ToothGrowth$dose), 
@@ -482,10 +501,10 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 ## ggplot2 ----
 
-hist(iris$Sepal.Length,
-     xlab = "Länge in cm",
-     ylab = "Häufigkeit",
-     main = "Sepal Length (mit Base R)")
+# hist(iris$Sepal.Length,
+#      xlab = "Länge in cm",
+#      ylab = "Häufigkeit",
+#      main = "Sepal Length (mit Base R)")
 
 # Variante 1 mit ggplot2
 ggplot(iris) +                                     # Daten 
@@ -496,7 +515,6 @@ ggplot(iris) +                                     # Daten
         y = "Häufigkeit",                          # Y-Achse
         main = "Sepal Length (mit ggplot, Var. 1)" # Titel
     )
-
 
 # Variante 2 mit ggplot2
 ggplot(iris) +
@@ -522,6 +540,18 @@ ggplot(iris) +
         y = "Häufigkeit",
         main = "Sepal Length (mit ggplot, Var. 3)"
     )
+
+# Scatterplot mit Regressionsgeraden
+ggplot(iris) +
+  aes(x = Sepal.Length, 
+      y = Sepal.Width,
+      color = Species,
+      fill = Species) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal() +
+  labs(x = "Sepal Width in cm",
+       y = "Sepal Length in cm")
 
 # Mit übertriebenen Darstellungen
 ggplot(iris) +

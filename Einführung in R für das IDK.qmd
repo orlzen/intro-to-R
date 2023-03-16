@@ -3,6 +3,7 @@ title: Einführung in R für das IDK
 author: Lorenz Biberstein
 institute: Institut für Delinquenz und Kriminalprävention, ZHAW
 date: last-modified
+date-format: "D. MMMM YYYY"
 format:
   html:
     embed-resources: true
@@ -114,7 +115,7 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
     -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Best practice: Sauber getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
 
-:::callout-important
+::: callout-important
 Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer.
 :::
 
@@ -262,6 +263,7 @@ Wollen die Daten visuell untersucht werden, gibt es verschiedene Möglickeiten:
 ::: callout-caution
 Ein allfälliger Unterordner muss schon bestehen für den Export darin
 :::
+
 -   Nb: Falls RStudio fragt, ob der Workspace gesichert werden soll: Immer "Nein" klicken, sonst lädt man beim nächsten Mal bearbeitete Daten in den Workspace und weiss nicht mehr, wie diese bearbeitet wurden.
 
 ```{r}
@@ -1055,20 +1057,22 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 -   Paket zur Datenvisualisierung, Teil des "Tidyverse"-Universum (siehe unten @sec-tidyverse)
 -   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
--   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien) oder @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie)
--   Literatur hier:
-    -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
-    -   @chang
--   Grundsätzliche Idee: Abbildung erstellen in Ebenen von unten nach oben
+-   Grundsätzliche Idee: Abbildung erstellen in Ebenen "von unten nach oben"
     -   Zuunterst: Daten
     -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe; "aesthetics")
     -   Nächste Ebene: Als was visualisieren (Säulen, Boxplot, Punkte etc.)
     -   Nächste Ebene: Beschriftungen
     -   Nächste Ebene...
+- Einfachster Code: `ggplot(df, aes(x = Var1, y = Var2)) + geom_function()`    
+-   Literatur hier:
+    -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
+    -   @chang  
+-   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
 ```{r, echo = TRUE}
 #| label: fig-iris-sepallength-histogram-base
 #| fig-cap: "Histogramm Sepal Length mit base R"
+#| include: FALSE
 
 hist(iris$Sepal.Length,
      xlab = "Länge in cm",
@@ -1098,8 +1102,7 @@ ggplot(iris) +
     aes(x = Sepal.Length) +
     geom_histogram(binwidth = 0.2) +   # Breite der bins definiert anstatt default
     facet_wrap(~ Species) +            # Pro Ausprägung von "Species" eine Abbildung  
-    labs(
-        x = "Länge in cm",
+    labs(x = "Länge in cm",
         y = "Häufigkeit")
 ```
 
@@ -1115,9 +1118,24 @@ ggplot(iris) +
                    alpha = 0.5,             # Durchsichtigkeit der Säulen
                    position = "identity") + # Überlagerung der Säulen
     theme_minimal() +                       # Weisser Hintergrund, kein Rahmen
-    labs(
-        x = "Länge in cm",
+    labs(x = "Länge in cm",
         y = "Häufigkeit")
+```
+
+```{r}
+#| label: fig-iris-sepal-scatterplot
+#| fig-cap: "Scatterplot Sepal Length x Sepal Width mit ggplot2, inkl. Regressionsgeraden"
+
+ggplot(iris) +
+  aes(x = Sepal.Length, 
+      y = Sepal.Width,
+      color = Species,
+      fill = Species) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal() +
+  labs(x = "Sepal Width in cm",
+       y = "Sepal Length in cm")
 ```
 
 -   Man kann es auch übertreiben mit den Einstellungen (@fig-iris-species-barplot)...
@@ -1312,10 +1330,10 @@ plot(fit_iris, which = 6)
     -   {chatgpt}: @chatgpt-4; <https://github.com/jcrodriguez1989/chatgpt>
 
     -   {gptstudio}: (noch nicht auf CRAN); <https://michelnivard.github.io/gptstudio/>
-    
+
 ::: callout-warning
 Wie häufig bei ChatGPT stimmt nicht immer alles, was die AI sagt, auch wenn es plausibel tönt! Manchmal erfindet sie auch nicht existierende Funktionen...
-:::    
+:::
 
 # Weiterführendes
 
