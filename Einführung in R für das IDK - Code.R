@@ -501,11 +501,6 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 ## ggplot2 ----
 
-# hist(iris$Sepal.Length,
-#      xlab = "Länge in cm",
-#      ylab = "Häufigkeit",
-#      main = "Sepal Length (mit Base R)")
-
 # Variante 1 mit ggplot2
 ggplot(iris) +                                     # Daten 
     aes(x = Sepal.Length) +                        # Aesthetics 
