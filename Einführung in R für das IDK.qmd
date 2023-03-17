@@ -1063,10 +1063,10 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
     -   Nächste Ebene: Als was visualisieren (Säulen, Boxplot, Punkte etc.)
     -   Nächste Ebene: Beschriftungen
     -   Nächste Ebene...
-- Einfachster Code: `ggplot(df, aes(x = Var1, y = Var2)) + geom_function()`    
+-   Einfachster Code: `ggplot(df, aes(x = Var1, y = Var2)) + geom_function()`\
 -   Literatur hier:
     -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
-    -   @chang  
+    -   @chang\
 -   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
 ```{r, echo = TRUE}
