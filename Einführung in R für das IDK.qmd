@@ -24,7 +24,7 @@ csl: apa.csl
 ::: callout-warning
 ## Bemerkung
 
-Diese Einleitung und Übersicht ist sicher nicht komplett und wird laufend ergänzt. Bitte melden bei bibs\@zhaw.ch, wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
+Diese Einleitung und Übersicht wird laufend ergänzt. Bitte melden bei bibs\@zhaw.ch, wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
 :::
 
 # Einleitung
@@ -84,6 +84,10 @@ Als Vorbereitung bitte die folgenden Schritte ausführen:
 ![R und RStudio im Software Center](images/Screenshot.png){#fig-rstudio-softwarecenter}
 
 ![Layout RStudio](images/Screenshot%20(58).png){#fig-layout-rstudio}
+
+::: callout-tip
+Empfehlung: R und RStudio am Arbeits-Laptop immer über das Software Center installieren, um Versionsprobleme zu vermeiden.
+:::
 
 -   RStudio ist unterteilt in verschiedene Fenster (die sich unterschiedlich anordnen lassen, Farbe und Schrift lassen sich ebenfalls anpassen, siehe @fig-layout-rstudio)
 -   Am wichtigsten:
