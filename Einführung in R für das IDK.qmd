@@ -4,6 +4,7 @@ author: Lorenz Biberstein
 institute: Institut für Delinquenz und Kriminalprävention, ZHAW
 date: last-modified
 date-format: "D. MMMM YYYY"
+title-block-banner: "#0064A6"
 format:
   html:
     embed-resources: true
@@ -19,12 +20,17 @@ number-depth: 3
 lang: "de-DE"
 bibliography: references.bib
 csl: apa.csl
+css: styles.css
 ---
 
 ::: callout-warning
 ## Bemerkung
 
-Diese Einleitung und Übersicht wird laufend ergänzt. Bitte melden bei bibs\@zhaw.ch, wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
+Diese Übersicht wird laufend ergänzt. Bitte melden bei [bibs\@zhaw.ch](mailto:bibs@zhaw.ch), wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
+:::
+
+::: callout-tip
+Die Code-Beispiele können aus diesem html-Dokument direkt kopiert werden, indem man oben rechts im Code-Abschnitt auf das Notizbrett klickt.
 :::
 
 # Einleitung
@@ -43,6 +49,7 @@ library(downloadthis) # Für Herunterladen von Datensätzen aus dem html-Output
 library(expss) # Für SPSS-ähnliche Tabellen
 library(tidylog, warn.conflicts = FALSE) # Für direkte Protokolle von Funktionen aus dem tidyverse
 library(conflicted) # Für Hilfe mit Paket-Konflikten
+library(survey) # Für Arbeit mit Umfragedaten, spezifisch Gewichtung
 ```
 
 ```{r setting}
@@ -67,7 +74,7 @@ Dies ist eine kurze Einleitung in R und RStudio für das IDK. Zur Einleitung geh
     -   "Treibstoffpreise_CH.rda"
     -   shiny-Demo: "app.R"
 
-Als Vorbereitung bitte die folgenden Schritte ausführen:
+Damit die Code-Beispiele in dieser Einleitung problemlos funktionieren, bitte die folgenden Schritte ausführen:
 
 1.  R und RStudio installieren (@sec-rstudio)
 2.  RStudio starten und ein Projekt eröffnen (@sec-projekte), z.B. mit Namen "Einführung R" in einem Ordner / einem Ort eurer Wahl
@@ -295,6 +302,26 @@ haven::write_sav(iris, here("Datenexport", "iris.sav"))
     -   "*POSIXct* oder *POSIXt*": Datumsformat von R
     -   "*ts*": Zeitreihe (time series, eigenes spezifisches Format in R)
 -   Datentyp (je nachdem) abfragen mit `class(),` `str()` oder `summary()` oder oben rechts in "Environment" anschauen...
+
+## Fehlende Werte {#sec-fehlende-werte}
+
+-   `NA` = fehlende Werte.
+-   `NaN` = "not a number" (bspw. bei Rechnung `0 / 0`).
+-   R ist empfindlicher gegenüber fehlenden Werten als z.B. SPSS, siehe Beispiel unten für eine Berechnung eines Mittelwertes oder @sec-korrelation-na für Korrelationen.
+-   Logische Überprüfung, ob ein Fall `NA` ist: `is.na()`.
+-   Anzahl `NA` anzeigen für alle Spalten / Variablen: `colSums(is.na())`.
+-   Anzahl `NA` anzeigen für eine einzelne Spalte: `sum(is.na(df$var))`.
+-   Fälle mit fehlenden Werten entfernen: `df <- na.omit(df)` (Zuweisung an Objekt nicht vergessen!).
+-   Bestimmten Wert als `NA` codieren: `df$Var1 <- na_if(df$Var1, Wert)`
+-   Im Gegensatz zu SPSS können in R nicht verschiedene numerische Werte als "missing" codiert werden.
+
+```{r}
+# Funktioniert nicht, wegen NAs:
+mean(car_sales$price)
+
+# Die NAs müssen aktiv ausgeklammert werden von der Analyse:
+mean(car_sales$price, na.rm = TRUE)
+```
 
 # Erste Arbeiten in R
 
@@ -586,24 +613,6 @@ tail(iris) # Zeigt letzte 6 Beobachtungen
 summary(iris)
 ```
 
-## Fehlende Werte
-
--   `NA` = fehlende Werte
--   `NaN` = "not a number" (bspw. bei Rechnung `0 / 0`)
--   Anzahl `NA` anzeigen für alle Spalten / Variablen: `colSums(is.na())`
--   Anzahl `NA` anzeigen für eine einzelne Spalte: `sum(is.na(df$var))`
--   Logische Überprüfung, ob ein Fall `NA` ist: `is.na()`
--   Fälle mit fehlenden Werten entfernen: `df <- na.omit(df)` (Zuweisung an Objekt nicht vergessen!)
--   Im Gegensatz zu SPSS können in R nicht verschiedene numerische Werte als "missing" codiert werden
-
-```{r}
-# Funktioniert nicht, wegen NAs:
-mean(car_sales$price)
-
-# Die NAs müssen aktiv ausgeklammert werden von der Analyse:
-mean(car_sales$price, na.rm = TRUE)
-```
-
 ## Kategoriale / ordinale Variablen & labels {#sec-kategoriale-variablen}
 
 -   Auch in R können kategoriale Variablen als Nummer (integers) gespeichert mit einem zugewiesenen "level"
@@ -891,6 +900,120 @@ expss::cro_tpct(ToothGrowth$supp, list(total(), ToothGrowth$dose),
                 total_statistic = "u_cases")
 ```
 
+## Korrelationen
+
+-   Einfachster Code für eine Korrelationsanalyse: `cor(x, y)`
+-   Default-Korrelation wird mit "pearson" berechnet (siehe `?cor()`).
+
+```{r}
+cor(iris$Sepal.Length, iris$Petal.Length)
+```
+
+-   Andere Korrelationsmethoden können definiert werden mit `cor(x, y, method = "kendall")` oder`cor(x, y, method = "spearman")`.
+
+```{r}
+cor(iris$Sepal.Length, iris$Petal.Length, method = "spearman")
+```
+
+-   Es kann auch gleich eine Korrelationsmatrix für mehrere Variablen berechnet werden mit `cor(df)` (anstatt zwei Variablen wird einfach der ganze data frame an die Funktion übergeben).
+    -   **Achtung**: Das geht natürlich nur für metrische Variablen, nicht-metrische Variablen müssen deshalb entweder ausgeschlossen werden (z.B. indem ein neuer Datensatz erstellt wird) oder die Auswahl der Variablen muss eingeschränkt werden, wie unten.
+    -   Für eine bessere Übersicht werden die Korrelationskoeffizienten gerundet auf zwei Nachkommastellen mit `round(..., digits = 2)`, wobei die Funktion zur Korrelation (`cor()`) gleich in die Rundungsfunktion `round()` eingebunden wird.
+
+```{r}
+# Auswahl des ganzen iris-Datensatz, Spalten 1 bis 4
+round(cor(iris[, 1:4]), 
+  digits = 2 # Gerundet auf zwei Dezimalstellen
+)
+```
+
+-   Für die Visualisierung von Korrelationen mit base R mit einem Streudiagramm siehe @sec-streudiagramm-base (2 Variablen), @sec-pairs-base (Matrix mehrerer Variablen) oder @fig-iris-sepal-scatterplot mit {ggplot2}.
+
+### Fehlende Werte (`NAs`) in Korrelationen {#sec-korrelation-na}
+
+-   **Achtung** bei `NAs` in den Daten (siehe @sec-fehlende-werte)!
+-   Die Variablen `car_sales$length` und `car_sales$curb_wgt` haben einige fehlende Werte.
+
+```{r}
+sum(is.na(car_sales$length))
+
+sum(is.na(car_sales$curb_wgt))
+```
+
+-   Die Korrelation kann so mit diesen Daten nicht korrekt berechnet werden, wenn die `NAs` nicht ausgeschlossen werden.
+
+```{r}
+cor(car_sales$length, car_sales$curb_wgt)
+```
+
+-   Um die Korrelation nur mit den Fällen zu berechnen, welche keine `NAs` beinhalten, muss der Zusatz `(..., use = "complete.obs)"` verwendet werden.
+
+```{r}
+cor(car_sales$length, car_sales$curb_wgt, use = "complete.obs")
+```
+
+## Regressionen
+
+### Lineare Regression
+
+-   Basisfunktion: `lm(Zielvariable ~ Prädiktor1 + Prädiktor2 + Prädiktor3, data = Datensatz)`
+-   Wird nur die Regression ausgeführt, erhält man als Resultat die eingegeben Formel (`Call`) und die Koeffizienten (`Coefficients`)
+
+```{r}
+lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, 
+               data = iris)
+```
+
+::: callout-tip
+Das Modell der Regression in ein Objekt übergeben und Abspeichern mit `<-`.
+:::
+
+```{r}
+fit_iris <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, 
+               data = iris)
+```
+
+-   Mit `summary(...)` des gespeicherten Regressionsmodells erhält man detailliertere Resultate des berechneten Modells.
+
+```{r}
+summary(fit_iris)
+```
+
+-   Falls nicht extra ein Objekt gespeichert werden soll, aber trotzdem das detaillierte Modell interessiert, einfach beides kombinieren in einem Befehl: `summary(lm())`.
+
+```{r}
+summary(lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, 
+               data = iris))
+```
+
+-   Interaktionsterme werden kombiniert mit `:`, z.B. `lm(Zielvariable ~ Prädiktor1 + Prädiktor2:Prädiktor3, data = Datensatz)`
+
+```{r}
+summary(lm(Sepal.Length ~ Sepal.Width + Petal.Length:Petal.Width, 
+               data = iris))
+```
+
+-   Wird das Modell als Objekt gespeichert, können mit der `plot()`-Funktion verschiedene Elemente des Modells visualisiert werden (z.B. `plot(fit_iris, which = 1)` für einen Residuenplot), siehe @sec-analyse-objekte.
+    -   Es sind sechs verschiedene Plots möglich aus einem Regressionsmodell, die mit `plot(..., which = x)` ausgewählt werden können.
+
+```{r}
+plot(fit_iris, 
+# Auswahl des ersten Plots      
+     which = 1)
+```
+
+### Logistische Regression
+
+-   Basisfunktion `glm()` mit Zusatzoption `(..., family = "binomial")`
+-   Hier als Beispiel mit den "Churn"-Daten und der Variable "Churn" als Zielvariable. Diese hat zwei Ausprägungen, da sie eine "logische" Variable ist (siehe `class(Churn$Churn)`) hat sie die Ausprägungen `TRUE` und `FALSE`.
+
+```{r}
+fit_churn_log <- glm(Churn ~ DayMins + EveMins + NightMins,
+                    data = Churn,
+                    family = "binomial")
+
+summary(fit_churn_log)
+```
+
 # Abbildungen
 
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
@@ -976,7 +1099,7 @@ boxplot(Sepal.Length ~ Species,
         main = "Sepal Length nach Species")
 ```
 
-## Streudiagramm
+## Streudiagramm {#sec-streudiagramm-base}
 
 -   Metrische Variablen gegeneinander
 -   Dritte Variable ("Species") als Farbe
@@ -1005,7 +1128,7 @@ legend("bottomright", # legende ist unten rechts
 -   Reihenfolge und Farbe der Legende muss manuell mit den Kategorien und Farben in der Abbildung abgestimmt werden!
 -   Beim genauen Hinsehen stimmen die Farben nicht 1:1 überein!
 
-## Pairs
+## Pairs {#sec-pairs-base}
 
 -   Ersten Überblick gewinnen, nicht zu viele Variablen gleichzeitig!
 -   Wenig sinnvoll bei nicht-metrische Variablen (siehe "Species")
@@ -1013,6 +1136,9 @@ legend("bottomright", # legende ist unten rechts
 ```{r, echo = TRUE}
 #| label: fig-iris-pairs-all
 #| fig-cap: "Pairs-plot aller Variablen in iris"
+
+# Daten "iris" laden
+data("iris")
 
 # Alle Variablen von iris
 pairs(iris)
@@ -1026,7 +1152,7 @@ pairs(iris)
 
 # Befehl eingeschränkt auf Spalten 1:4 von iris 
 # (und alle Zeilen, keine Eingabe vor Komma)
-pairs(iris[,1:4])
+pairs(iris[ , 1:4])
 ```
 
 ## Standard-Plot (inkl. Streudiagramm) {#sec-abb-plot}
@@ -1163,7 +1289,7 @@ ggplot(iris) +
 ```
 
 -   @fig-iris-scatter:
-    -   Füllfarbe der Punkte in der ZHAW-Farbe im HEX-Code (`#0079DB`), Punkte vergrössert (für die Umwandlung eines CMYK in Hex, z.B.: <https://colordesigner.io/convert/cmyktohex>)
+    -   Füllfarbe der Punkte in der ZHAW-Farbe im HEX-Code (`#0064A6`), Punkte vergrössert (für die Umwandlung eines CMYK in Hex, z.B.: <https://colordesigner.io/convert/cmyktohex>)
     -   Grenzen der X-Achse manuell gesetzt mit `xlim()` und `ylim()`
     -   Beschriftungstext in Abbildung drin mit `annotate()`
     -   Pfeil mit `geom_curve()`
@@ -1175,7 +1301,7 @@ ggplot(iris) +
 ggplot(iris) +
   aes(x = Petal.Length,
       y = Sepal.Length) +
-  geom_point(col = "#0079DB",
+  geom_point(col = "#0064A6",
              size = 3) +
   xlim(0, 2.2) +
   ylim(3, 8.3) +
@@ -1232,7 +1358,7 @@ ggplot(USArrests) +
   theme_minimal()
 ```
 
-# Resultate von Analysen als Objekte
+# Resultate von Analysen als Objekte {#sec-analyse-objekte}
 
 -   Objekte in R müssen nicht zwingend Zahlen oder Datensätze sein. Als Objekte können auch gespeichert werden:
     -   Resultate von Analysen
@@ -1304,6 +1430,30 @@ plot(fit_iris, which = 5)
 #| fig-cap: "Cooks Distance vs. Leverage Plot von lm(iris)"
 
 plot(fit_iris, which = 6)
+```
+
+# Spezialfall gewichtete Umfragedaten
+
+::: callout-warning
+Achtung, dieser Abschnitt ist provisorisch, ich habe keine der Pakete weiterführend benutzt!
+:::
+
+-   Am IDK arbeiten wir häufig mit gewichteten Umfragedaten. Die Gewichtung von Daten ist nicht in base R möglich.
+-   Dazu kann z.B. das {survey}-Paket benutzt werden von @survey.
+    -   Die Anwendung ist jedoch einiges komplizierter als bspw. in SPSS.
+    -   Eine Anleitung gibt es z.B. bei <https://zacharylhertz.github.io/posts/2021/06/survey-package>.
+-   Alternative: {srvyr} von @srvyr: Benutzt Funktionen aus dem {survey}-Paket, kann aber "pipes" (`|>`) und andere Funktionen aus dem Tidyverse (siehe @sec-tidyverse) benutzen. Für einen Vergleich von {survey} und {srvyr} siehe hier: <https://cran.r-project.org/web/packages/srvyr/vignettes/srvyr-vs-survey.html>.
+
+```{r}
+#| include: FALSE
+#| eval: false
+
+
+# First, create a survey design object for the dataset.
+# Here, my data is 'df' and weights are "var_gewicht".
+svy.dat <- svydesign(ids =~ 1, 
+                     data = df,
+                     weights = df$var_gewicht)
 ```
 
 # Wo finde ich Hilfe?
