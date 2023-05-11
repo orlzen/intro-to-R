@@ -1688,15 +1688,15 @@ summiere <- function(a, b) {
 summiere(2, 3)
 ```
 
-## Git und github {#sec-github}
+## Git und GitHub {#sec-github}
 
 -   System zur Kollaboration an Code und Versionsontrolle
 -   Aus Software Center "Git" installieren
--   Ist in RStudio integriert (oben rechts "Git"), braucht kein weiteres Programm
+-   Ist in RStudio integriert (oben rechts "Git"), braucht kein weiteres Programm (evtl. unter "Tools - Global Options - Git/SVN" den Pfad zur git-Installation anpassen ("Git executable"), meistens C:/Program Files/Git/bin/git.exe)
 -   <https://github.com> resp. eigene Version für ZHAW: <https://github.zhaw.ch/>
 -   Unter <https://github.com/orlzen/intro-to-R> ist z.B. der Code für diese Einführung öffentlich sichtbar, die Änderungen sind protokolliert und können von allen nachvollzogen werden.
 -   Einführung speziell für R z.B. hier: <https://happygitwithr.com/index.html>
--   Verknüpfung von RStudio und github mit einem Personal Access Token (PAT) wird hier beschrieben: <https://rfortherestofus.com/2021/02/how-to-use-git-github-with-r/> (unter "Connect RStudio and GitHub")
+-   Verknüpfung von RStudio und GitHub mit einem Personal Access Token (PAT) wird hier beschrieben: <https://rfortherestofus.com/2021/02/how-to-use-git-github-with-r/> (unter "Connect RStudio and GitHub")
 -   Im Intranet der ZHAW: <https://zhaw.sharepoint.com/:b:/r/sites/osc/Freigegebene%20Dokumente/2021_10_27%20-%20Git%20why%20and%20how.pdf?csf=1&web=1&e=2EehhW> oder <https://intra.zhaw.ch/departemente/school-of-engineering/services/dienste-tools/soe-it-infrastruktur/git-umgebung/>
 
 ## Shiny {#sec-shiny}
