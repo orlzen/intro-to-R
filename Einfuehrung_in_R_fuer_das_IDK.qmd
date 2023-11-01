@@ -1199,7 +1199,7 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 -   Literatur hier:
     -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
     -   @chang\
--   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
+-   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen & vertikaler Linie beim Mittelwert der X-Achse), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie und leichter Transparenz (`alpha`)) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
 ```{r, echo = TRUE}
 #| label: fig-iris-sepallength-histogram-base
@@ -1222,7 +1222,11 @@ ggplot(iris) +                                     # Daten
     geom_histogram() +                             # Art der Visualisierung 
     labs(                                          # Labels 
         x = "Länge in cm",                         # X-Achse
-        y = "Häufigkeit")                          # Titel
+        y = "Häufigkeit") +                        # Titel
+  geom_vline(xintercept = mean(iris$Sepal.Length), # Vertikale Linie bei Mittelwert
+                                                   # von iris$Sepal.Length
+             linetype = "dashed",                  # Gestrichelte Linie
+             color = "red")                        # Farbe der Linie rot
 ```
 
 ```{r}
@@ -1310,11 +1314,11 @@ ggplot(iris) +
   annotate("text",
            x = 1,
            y = 7.5,
-           label = "Diese Gruppe hat grössere Blumen") +
+           label = "Hier sind die grössten Blumen") +
   geom_curve(aes(x = 1,
                  y = 7.2,
-                 xend = 1.4,
-                 yend = 6.5),
+                 xend = 1.7,
+                 yend = 5.7),
              arrow = arrow()) +
   theme_minimal() +
   labs(x = "Länge Blüttenblatt [in cm]",
