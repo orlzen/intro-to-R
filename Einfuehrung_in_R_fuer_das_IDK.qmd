@@ -316,6 +316,7 @@ haven::write_sav(iris, here("Datenexport", "iris.sav"))
 -   Fälle mit fehlenden Werten entfernen: `df <- na.omit(df)` (Zuweisung an Objekt nicht vergessen!).
 -   Bestimmten Wert als `NA` codieren: `df$Var1 <- na_if(df$Var1, Wert)`
 -   Im Gegensatz zu SPSS können in R nicht verschiedene numerische Werte als "missing" codiert werden.
+-   Weiterführendes Beispiel zur Kontrolle von fehlenden Werten und der Möglichkeit, fehlende Werte zu durch "imputatation" zu ergänzen: @feliz2023
 
 ```{r}
 # Funktioniert nicht, wegen NAs:
