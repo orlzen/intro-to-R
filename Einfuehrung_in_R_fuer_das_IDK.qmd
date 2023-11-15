@@ -648,7 +648,7 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
 ```
 
 ::: callout-caution
-Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier: <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
+Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier (zuunterst, Abschnitt "Interaction with \'haven\'"): <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
 :::
 
 # Recodierungen und Berechnung neuer Variablen {#sec-recodierung}
