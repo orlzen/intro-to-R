@@ -21,7 +21,7 @@ number-sections: true
 number-depth: 3
 lang: "de-DE"
 bibliography: references.bib
-csl: apa.csl
+csl: zhaw-soziale-arbeit-zitieren-und-belegen.csl
 css: styles.css
 ---
 
