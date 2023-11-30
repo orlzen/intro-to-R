@@ -127,13 +127,14 @@ Empfehlung: R und RStudio am Arbeits-Laptop immer über das Software Center inst
     -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
     -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Best practice: Sauber getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
+-   Siehe hier [https://rstats.wtf/projects](https://rstats.wtf/projects)
 
 ::: callout-important
-Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht anwendbar auf anderen Geräte / für andere Benutzer.
+Absolute Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht übertragbar auf anderen Geräte / für andere Benutzer.
 :::
 
--   Allgemein gültige Pfade mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
-    -   R weiss dann "`here() starts at C:/Users/bibs/OneDrive - ZHAW/R/Einführung in R für das IDK`" und startet im Projektordner (der irgendwo abgelegt werden kann)
+-   Sobald Code mit jemand anderem (oder auch nur einem anderen eigenen Computer mit anderer Ordnerstruktur) geteilt werden soll: Allgemein gültige Pfade benutzen mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
+    -   R arbeitet dann aus einem designierten Projektordner heraus, der irgendwo abgelegt werden kann (siehe [https://rstats.wtf/practice-safe-paths](https://rstats.wtf/practice-safe-paths).
     -   Daten einlesen z.B. mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind.
 
 ## Kleinere Unterschied zu SPSS
