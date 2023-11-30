@@ -127,14 +127,14 @@ Empfehlung: R und RStudio am Arbeits-Laptop immer über das Software Center inst
     -   R weiss, welche Skripte, Dateien etc. zu welchem Projekt gehören
     -   In RStudio von Projekt zu Projekt wechseln, vereinfacht Organisation
 -   Best practice: Sauber getrennte Unterordner für Daten, Analysen, Abbildungen, Bericht etc.
--   Siehe hier [https://rstats.wtf/projects](https://rstats.wtf/projects)
+-   Siehe hier <https://rstats.wtf/projects>
 
 ::: callout-important
 Absolute Pfade à la "`C:\Users\bibs\OneDrive - ZHAW\R\Einführung in R für das IDK`" sind **verpönt**, weil nicht übertragbar auf anderen Geräte / für andere Benutzer.
 :::
 
 -   Sobald Code mit jemand anderem (oder auch nur einem anderen eigenen Computer mit anderer Ordnerstruktur) geteilt werden soll: Allgemein gültige Pfade benutzen mit dem Paket {here} [@here] -\> laden am Anfang mit `library(here)`
-    -   R arbeitet dann aus einem designierten Projektordner heraus, der irgendwo abgelegt werden kann (siehe [https://rstats.wtf/practice-safe-paths](https://rstats.wtf/practice-safe-paths).
+    -   R arbeitet dann aus einem designierten Projektordner heraus, der irgendwo abgelegt werden kann (siehe <https://rstats.wtf/practice-safe-paths>.
     -   Daten einlesen z.B. mit `Churn <- read_table(here("Daten", "Churn.csv"))` funktioniert für alle Personen, solange sie in ihrem Hauptprojektordner einen Unterordner "Daten" haben, in dem die Daten "Churn.csv" abgelegt sind.
 
 ## Kleinere Unterschied zu SPSS
@@ -649,7 +649,7 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
 ```
 
 ::: callout-caution
-Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier (zuunterst, Abschnitt "Interaction with \'haven\'"): <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
+Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier (zuunterst, Abschnitt "Interaction with 'haven'"): <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
 :::
 
 # Recodierungen und Berechnung neuer Variablen {#sec-recodierung}
@@ -1200,6 +1200,7 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 -   Einfachster Code: `ggplot(df, aes(x = Var1, y = Var2)) + geom_function()`\
 -   Literatur hier:
     -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
+    -   @rapp2023 (online hier: <https://albert-rapp.de/posts/ggplot2-tips/18_ultimate_guide/18_ultimate_guide>)
     -   @chang\
 -   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen & vertikaler Linie beim Mittelwert der X-Achse), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie und leichter Transparenz (`alpha`)) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
