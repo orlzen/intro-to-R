@@ -589,6 +589,7 @@ iris[1,"Sepal.Length"] # Spalte mit Name "Sepal.Length"
 iris$Sepal.Length[1] # Spalte mit Name "Sepal.Length"
 ```
 
+-   Weiteres zur Auswahl von einzelnen Spalten ("subsetting"), mit Code-Beispielen für *base R* und das *Tidyverse* (@sec-tidyverse), siehe @brunner2023
 -   Analog kann mit dem `$` auch auf Elemente von anderen Objekte zugegriffen werden, z.B. auf Elemente eines Outputs einer Operation, die als Listen gespeichert werden:
     -   `fit_iris$coefficients` wird alle Elemente aus dem "Unterelement" `coefficients` des Objekts `fit_iris` (bspw. ein Resultat einer linearen Regression) wiedergeben.
     -   Um die Namen von Elementen von Objekten zu sehen: `names(objekt)`. (Je nach Art des Objektes zeigt es anderes an, bei data frames z.b. einfach die Variablennamen, bei Listen die versch. Elemente etc.)
