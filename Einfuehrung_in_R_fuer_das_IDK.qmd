@@ -1598,7 +1598,9 @@ View(virginica_tidy)
 
     -   Und weitere, siehe <https://www.tidyverse.org/packages/>
 
--   Open source Lehrbuch zum Tidyverse: [@wickham2016b] (Hadley Wickham ist Chief Scientist bei Posit, der Firma, die RStudio betreibt)
+-   Open source Lehrbuch zum ganzen Tidyverse: [@wickham2016b] (Hadley Wickham ist Chief Scientist bei Posit, der Firma, die RStudio betreibt)
+
+-   Blog-Post zur Datenmanipulation mit {dplyr}: @soetewey2023
 
 -   Nette Ergänzung, wenn Funktionen aus {tidyr} oder {dplyr} genutzt werden: {tidylog} ist ein sogenannter "wrapper" für Funktionen aus diesen beiden Paketen: Resultat ist das gleiche, aber es wird jeweils angezeigt, was sich nach jedem Arbeitsschritt verändert hat [@tidylog]. Nutzung: `tidylog::filter()` anstatt `dplyr::filter()` etc.
 
