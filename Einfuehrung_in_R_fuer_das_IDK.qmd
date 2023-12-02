@@ -28,7 +28,7 @@ css: styles.css
 ::: callout-warning
 ## Bemerkung
 
-Diese Übersicht wird laufend ergänzt. Bitte melden bei [bibs\@zhaw.ch](mailto:bibs@zhaw.ch), wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte.
+Diese Übersicht wird laufend ergänzt. Bitte melden bei [bibs\@zhaw.ch](mailto:bibs@zhaw.ch), wenn etwas falsch oder unverständlich ist, fehlt oder ergänzt werden sollte oder direkt als issue im öffentlichen [github repository](https://github.com/orlzen/intro-to-R).
 :::
 
 ::: callout-tip
