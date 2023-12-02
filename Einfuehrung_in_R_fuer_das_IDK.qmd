@@ -1201,7 +1201,7 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
     -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
     -   @rapp2023 (online hier: <https://albert-rapp.de/posts/ggplot2-tips/18_ultimate_guide/18_ultimate_guide>)
     -   @chang
-    -   *Fehler, die man nicht machen soll* in der Datenvisualisierung, mit Code für R: @li2023\
+    -   *Fehler, die man nicht machen soll* in der Datenvisualisierung, mit Code für R: @c.li2023\
 -   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen & vertikaler Linie beim Mittelwert der X-Achse), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie und leichter Transparenz (`alpha`)) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
 ```{r, echo = TRUE}
@@ -1442,10 +1442,6 @@ plot(fit_iris, which = 6)
 ```
 
 # Spezialfall gewichtete Umfragedaten
-
-::: callout-warning
-Achtung, dieser Abschnitt ist provisorisch, ich habe keine der Pakete weiterführend benutzt!
-:::
 
 -   Am IDK arbeiten wir häufig mit gewichteten Umfragedaten. Die Gewichtung von Daten ist nicht in base R möglich.
 -   Dazu kann z.B. das {survey}-Paket benutzt werden von @survey.
