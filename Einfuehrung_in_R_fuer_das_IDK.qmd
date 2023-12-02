@@ -1482,6 +1482,8 @@ svy.dat <- svydesign(ids =~ 1,
 
 -   Verschiedene (technische) Handbücher zu R: <https://rstudio.github.io/r-manuals/>
 
+-   Ein umfassendes Einführungswerk auf Deutsch zu R und RStudio, welches relativ ähnliche Themen behandelt wie diese Einführung gibt es von @großeschlarmann2023a
+
 -   ChatGPT: Es gib mittlerweile einige Pakete zu ChatGPT, welche beim Codieren helfen sollen, indem sie Code-Vorschläge machen oder Code auf Fehler überprüfen.
 
     -   Man braucht auf jeden Fall einen API key (bekommt man einfach über den Zugang zu ChatGPT), welcher in RStudio hinterlegt werden muss
