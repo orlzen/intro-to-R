@@ -1189,8 +1189,7 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 
 ## ggplot2 {#sec-ggplot}
 
--   Paket zur Datenvisualisierung, Teil des "Tidyverse"-Universum (siehe unten @sec-tidyverse)
--   Gleiche Syntaxlogik wie andere "Tidyverse"-Pakete
+-   Die *richtige* Stärke zur Datenvisualisierung in R lieght in der Benutzung des Pakets {ggplot2} [@ggplot2-4]. Dieses ist Teil des "Tidyverse"-Universum (siehe unten @sec-tidyverse) und benutzt entsprechend die gleiche Syntaxlogik wie andere "Tidyverse"-Pakete.
 -   Grundsätzliche Idee: Abbildung erstellen in Ebenen "von unten nach oben"
     -   Zuunterst: Daten
     -   Nächste Ebene: Was soll wo hin (X- und Y-Achse, ggf. Füllung und Farbe; "aesthetics")
@@ -1201,7 +1200,8 @@ plot(iris$Sepal.Width, iris$Sepal.Length)
 -   Literatur hier:
     -   @wickham2016a (online hier: <https://ggplot2-book.org/index.html>)
     -   @rapp2023 (online hier: <https://albert-rapp.de/posts/ggplot2-tips/18_ultimate_guide/18_ultimate_guide>)
-    -   @chang\
+    -   @chang
+    -   *Fehler, die man nicht machen soll* in der Datenvisualisierung, mit Code für R: @li2023\
 -   **Viele** Einstellungsmöglichkeiten bei Abbildungen, siehe z.B. @fig-iris-sepallength-histogram-ggplot (Histogramm mit Standardeinstellungen & vertikaler Linie beim Mittelwert der X-Achse), @fig-iris-sepallength-histogram-ggplot-facet (Histogramm mit "faceting", Aufteilung der Abbildung in bestehende Kategorien), @fig-iris-sepallength-histogram-ggplot-identity (Histogramm mit Füllung je nach Kategorie und leichter Transparenz (`alpha`)) oder @fig-iris-sepal-scatterplot (Streudiagramm mit Regressionsgeraden, aufgeteilt nach Kategorie).
 
 ```{r, echo = TRUE}
