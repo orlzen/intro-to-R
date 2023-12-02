@@ -649,6 +649,8 @@ faktorbeispieldaten <- expss::apply_labels(faktorbeispieldaten,
                                            sex = "Geschlecht")
 ```
 
+-   Zur Nutzung von labels mit den Paketen {labelled} [@labelled] und {sjlabelled} [@sjlabelled], siehe der Blog-Post von @pileggi2020
+
 ::: callout-caution
 Wenn Daten in R gelabelt und dann mit {haven} exportiert werden sollen in ein SPSS-Format: Die beiden Pakete können Konflikte erzeugen, siehe hier (zuunterst, Abschnitt "Interaction with 'haven'"): <https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html>
 :::
