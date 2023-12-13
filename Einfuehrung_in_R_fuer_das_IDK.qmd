@@ -1023,8 +1023,10 @@ summary(fit_churn_log)
 
 # Abbildungen
 
+-   Eine grosse Stärke von R ist die Möglichkeit, Daten relativ einfach schnell, und mit etwas mehr Aufwand publikationsbereit, zu erstellen.
 -   Einfache Abbildungen lassen sich mit dem {graphics}-Paket erstellen, welches in base R integriert ist
 -   Mehr Individualisierung mit Paket {ggplot2} (@sec-ggplot)
+-   Für eine Übersicht über mögliche Visualisierung in R, aufgetrennt nach Typ der Abbildung und unterschieden zwischen base R und {ggplot}, siehe <https://r-charts.com/>
 
 ::: callout-tip
 ## Base R oder ggplot2?
@@ -1110,7 +1112,7 @@ boxplot(Sepal.Length ~ Species,
 
 -   Metrische Variablen gegeneinander
 -   Dritte Variable ("Species") als Farbe
--   Keine Legende standardmässig, muss manuell erstellt werden und ist nicht sehr intuitiv (weil zwei getrennte Objekte erstellt werden ("plot" und "legend"), müssen die Farben manuell aufeinander abgestimmt werden!)
+-   Keine Legende standardmässig, muss manuell erstellt werden und ist nicht sehr intuitiv (weil zwei getrennte Objekte erstellt werden ("plot" und "legend"), müssen die Farben manuell aufeinander abgestimmt werden!). Hier ist ggplot2 (@sec-ggplot) schon einfacher.
 
 ```{r}
 #| label: fig-iris-scatter-sepal-petal
